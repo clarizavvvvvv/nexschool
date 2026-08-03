@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NexSchool</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="assets/default.png" alt="NexSchool" style="width:60px;height:60px;border-radius:50%;background:#2d6a9f;padding:10px;">
+                <h1>Nex<span>School</span></h1>
+                <p>Belajar & Berkembang Bersama</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>📝 NIS</label>
+                    <input type="text" id="nis" placeholder="Masukkan NIS (contoh: 2026001)" required>
+                </div>
+                <div class="input-group">
+                    <label>📧 Email</label>
+                    <input type="email" id="email" placeholder="Masukkan Email (contoh: siswa@nexschool.id)" required>
+                </div>
+                <div class="input-group">
+                    <label>🔒 Password</label>
+                    <input type="password" id="password" placeholder="Masukkan Password" required>
+                </div>
+                
+                <div id="loginError" class="error-msg" style="display:none;">❌ NIS, Email, atau Password salah!</div>
+                
+                <button type="submit" class="btn-primary btn-block">Masuk</button>
+                
+                <div class="login-options">
+                    <a href="#" id="lupaPassword">Lupa Password?</a>
+                    <span>|</span>
+                    <a href="#" id="guestLogin">Masuk sebagai Tamu</a>
+                </div>
+            </form>
+            
+            <div class="login-footer">
+                <small>&copy; 2026 NexSchool - Platform Belajar Digital</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== LOGIN HANDLER =====
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nis = document.getElementById('nis').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorDiv = document.getElementById('loginError');
+        
+        // Validasi
+        if(!nis || !email || !password) {
+            errorDiv.textContent = '⚠️ Semua field harus diisi!';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Validasi login (hardcoded)
+        if(nis === '2026001' && email === 'siswa@nexschool.id' && password === '123456') {
+            // Simpan ke localStorage
+            const userData = {
+                name: 'Siswa NexSchool',
+                nis: nis,
+                email: email,
+                kelas: 'XII IPA 1',
+                foto: 'default.png'
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Redirect ke dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            errorDiv.textContent = '❌ NIS, Email, atau Password salah!';
+            errorDiv.style.display = 'block';
+        }
+    });
+    
+    // ===== LUPA PASSWORD =====
+    document.getElementById('lupaPassword').addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('📧 Silakan hubungi admin sekolah untuk reset password.\n\nAtau kirim email ke: admin@nexschool.id');
+    });
+    
+    // ===== MASUK SEBAGAI TAMU =====
+    document.getElementById('guestLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        if(confirm('Masuk sebagai tamu? Anda akan memiliki akses terbatas.')) {
+            const guestData = {
+                name: 'Tamu NexSchool',
+                nis: 'GUEST001',
+                email: 'tamu@nexschool.id',
+                kelas: '-',
+                foto: 'default.png',
+                isGuest: true
+            };
+            localStorage.setItem('user', JSON.stringify(guestData));
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard.html';
+        }
+    });
+    </script>
+</body>
+</html>

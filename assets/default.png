@@ -1,0 +1,9 @@
+/* Fallback jika gambar tidak ada */
+.user-badge img, .profile-header img {
+    background: #2d6a9f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+}

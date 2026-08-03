@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - NexSchool</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="appBody">
+    <div class="app-container">
+        <div id="sidebarContainer"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h3>👤 Profil Saya</h3>
+                </div>
+                <div class="topbar-right">
+                    <span style="color:#888;" id="tanggalDisplay"></span>
+                    <div class="user-badge">
+                        <img src="assets/default.png" alt="Foto" id="userFoto" onerror="this.style.display='none'">
+                        <span id="userName">User</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PROFIL HEADER -->
+            <div class="profile-header">
+                <div style="position:relative;">
+                    <img src="assets/default.png" alt="Foto Profil" id="profilFoto" style="width:100px;height:100px;border-radius:50%;object-fit:cover;background:#2d6a9f;" onerror="this.style.display='none'">
+                    <button class="btn-secondary" id="gantiFoto" style="font-size:12px;margin-top:8px;display:block;width:100%;">Ganti Foto</button>
+                </div>
+                <div style="flex:1;">
+                    <h3 id="profileName">User</h3>
+                    <p style="color:#888;margin:4px 0;">
+                        <strong>NIS:</strong> <span id="profileNis">-</span> 
+                        | <strong>Kelas:</strong> <span id="profileKelas">-</span>
+                    </p>
+                    <p style="color:#888;font-size:14px;" id="profileEmail">-</p>
+                    <p style="color:#888;font-size:13px;margin-top:4px;">
+                        <span style="background:#e8edf3;padding:2px 12px;border-radius:20px;font-size:12px;">🟢 Online</span>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- STATISTIK -->
+            <div style="margin:24px 0;">
+                <h4 style="margin-bottom:12px;">📊 Statistik Aktivitas</h4>
+                <div class="profile-stats">
+                    <div class="stat-item"><div class="number">12</div><small>Tugas Selesai</small></div>
+                    <div class="stat-item"><div class="number">8</div><small>Kehadiran Ekstra</small></div>
+                    <div class="stat-item"><div class="number">3</div><small>Sesi Konseling</small></div>
+                    <div class="stat-item"><div class="number">5</div><small>Grup Diskusi</small></div>
+                </div>
+            </div>
+            
+            <!-- EDIT PROFIL -->
+            <div class="page-card">
+                <h4>✏️ Edit Profil</h4>
+                <form id="editProfilForm">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div>
+                            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Nama Lengkap</label>
+                            <input type="text" id="editNama" style="width:100%;padding:10px 14px;border:2px solid #e0e7ef;border-radius:8px;font-size:14px;">
+                        </div>
+                        <div>
+                            <label style="font-size:13px;font-weight:600;display:block;margin-bottom:4px;">Kelas</label>
+                            <input type="text" id="editKelas" style="width:100%;padding:10px 14px;border:2px solid #e0e7ef;border-radius:8px;font-size:14px;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-top:16px;">💾 Simpan Perubahan</button>
+                </form>
+            </div>
+            
+            <!-- PENGATURAN -->
+            <div class="page-card">
+                <h4>⚙️ Pengaturan</h4>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 0;border-bottom:1px solid #f0f4f8;">
+                        <input type="checkbox" checked style="width:18px;height:18px;"> Notifikasi Aktivitas
+                    </label>
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 0;border-bottom:1px solid #f0f4f8;">
+                        <input type="checkbox" id="modeGelap" style="width:18px;height:18px;"> 🌙 Mode Gelap
+                    </label>
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:8px 0;border-bottom:1px solid #f0f4f8;">
+                        <input type="checkbox" checked style="width:18px;height:18px;"> Notifikasi Konseling
+                    </label>
+                    <button class="btn-secondary" id="gantiPassword" style="margin-top:8px;width:fit-content;padding:10px 24px;cursor:pointer;">🔑 Ganti Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== LOAD PROFIL =====
+    function loadProfile() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(!user) return;
+        
+        document.getElementById('profileName').textContent = user.name;
+        document.getElementById('profileNis').textContent = user.nis;
+        document.getElementById('profileKelas').textContent = user.kelas;
+        document.getElementById('profileEmail').textContent = `📧 ${user.email}`;
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userFoto').src = `assets/${user.foto}`;
+        document.getElementById('profilFoto').src = `assets/${user.foto}`;
+        document.getElementById('editNama').value = user.name;
+        document.getElementById('editKelas').value = user.kelas;
+    }
+    
+    // ===== EDIT PROFIL =====
+    document.getElementById('editProfilForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const nama = document.getElementById('editNama').value.trim();
+        const kelas = document.getElementById('editKelas').value.trim();
+        
+        if(!nama || !kelas) {
+            alert('⚠️ Nama dan Kelas tidak boleh kosong!');
+            return;
+        }
+        
+        const user = JSON.parse(localStorage.getItem('user'));
+        user.name = nama;
+        user.kelas = kelas;
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        alert('✅ Profil berhasil diperbarui!');
+        loadProfile();
+    });
+    
+    // ===== MODE GELAP =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const modeGelap = document.getElementById('modeGelap');
+        const body = document.getElementById('appBody');
+        
+        if(localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            modeGelap.checked = true;
+        }
+        
+        modeGelap.addEventListener('change', function() {
+            if(this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+        
+        // ===== GANTI PASSWORD =====
+        document.getElementById('gantiPassword').addEventListener('click', function() {
+            const oldPass = prompt('🔒 Masukkan Password Lama:');
+            if(oldPass !== null) {
+                if(oldPass === '123456') {
+                    const newPass = prompt('🔑 Masukkan Password Baru (minimal 6 karakter):');
+                    if(newPass !== null && newPass.length >= 6) {
+                        const confirmPass = prompt('✅ Konfirmasi Password Baru:');
+                        if(confirmPass === newPass) {
+                            alert('✅ Password berhasil diubah!');
+                            // Simpan password baru ke localStorage
+                            localStorage.setItem('savedPassword', newPass);
+                        } else {
+                            alert('❌ Password tidak sama!');
+                        }
+                    } else if(newPass !== null && newPass.length < 6) {
+                        alert('❌ Password minimal 6 karakter!');
+                    }
+                } else if(oldPass !== '') {
+                    alert('❌ Password lama salah!');
+                }
+            }
+        });
+        
+        // ===== GANTI FOTO =====
+        document.getElementById('gantiFoto').addEventListener('click', function() {
+            alert('📸 Fitur ganti foto akan segera hadir!');
+        });
+    });
+    
+    // ===== LOAD SIDEBAR =====
+    fetch('partials/sidebar.html')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('sidebarContainer').innerHTML = html;
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                if(link.getAttribute('href') === 'profil.html') link.classList.add('active');
+            });
+        });
+    
+    // ===== CEK LOGIN =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn) window.location.href = 'index.html';
+        loadProfile();
+    }
+    
+    function updateDate() {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+    
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+        updateDate();
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+    });
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

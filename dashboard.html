@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - NexSchool</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR akan di-load dari partials/sidebar.html -->
+        <div id="sidebarContainer"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h3>📚 Beranda</h3>
+                </div>
+                <div class="topbar-right">
+                    <span style="color:#888;" id="tanggalDisplay"></span>
+                    <div class="user-badge" id="userBadge">
+                        <img src="assets/default.png" alt="Foto" id="userFoto" onerror="this.style.display='none'">
+                        <span id="userName">User</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SELAMAT DATANG -->
+            <div class="page-card" style="background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border:none;">
+                <h3 id="welcomeText">Selamat Datang, User! 👋</h3>
+                <p style="opacity:0.9;" id="userInfo">NIS: - | Kelas: -</p>
+                <p style="margin-top:8px;font-size:14px;opacity:0.8;">Yuk, mulai aktivitas belajarmu hari ini!</p>
+            </div>
+            
+            <!-- GRID FITUR UTAMA -->
+            <div class="card-grid">
+                <div class="card" onclick="location.href='diskusi.html'">
+                    <div class="card-icon">🗨️</div>
+                    <h4>Diskusi & Belajar Kelompok</h4>
+                    <p>Ruang obrolan + whiteboard bersama untuk kerja kelompok.</p>
+                    <span class="badge">5 grup aktif</span>
+                </div>
+                
+                <div class="card" onclick="location.href='ekstrakurikuler.html'">
+                    <div class="card-icon">🏫</div>
+                    <h4>Portal Ekstrakurikuler</h4>
+                    <p>Daftar klub, lihat jadwal, & presensi kegiatan sekolah.</p>
+                    <span class="badge">3 klub diikuti</span>
+                </div>
+                
+                <div class="card" onclick="location.href='konseling.html'">
+                    <div class="card-icon">💚</div>
+                    <h4>Konseling & BK Virtual</h4>
+                    <p>Curhat privat & jadwalkan sesi konseling dengan guru BK.</p>
+                    <span class="badge">2 sesi tersedia</span>
+                </div>
+            </div>
+            
+            <!-- AKTIVITAS TERAKHIR -->
+            <div class="page-card">
+                <h4>📌 Aktivitas Terakhir</h4>
+                <ul style="list-style:none;padding:0;">
+                    <li style="padding:8px 0;border-bottom:1px solid #f0f4f8;">✔️ Bergabung di grup "Matematika XII" - 10 menit lalu</li>
+                    <li style="padding:8px 0;border-bottom:1px solid #f0f4f8;">✔️ Presensi hadir di "Basket" - 2 jam lalu</li>
+                    <li style="padding:8px 0;">✔️ Sesi konseling dengan Bu Ani - kemarin</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== LOAD SIDEBAR =====
+    fetch('partials/sidebar.html')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('sidebarContainer').innerHTML = html;
+            // Set active menu
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                if(link.getAttribute('href') === 'dashboard.html') {
+                    link.classList.add('active');
+                }
+            });
+        });
+    
+    // ===== CEK LOGIN =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(!user) {
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // Tampilkan data user
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userFoto').src = `assets/${user.foto}`;
+        document.getElementById('welcomeText').textContent = `Selamat Datang, ${user.name}! 👋`;
+        document.getElementById('userInfo').textContent = `NIS: ${user.nis} | Kelas: ${user.kelas}`;
+        
+        // Tampilkan badge guest jika tamu
+        if(user.isGuest) {
+            const badge = document.createElement('span');
+            badge.style.cssText = 'background:#f5a623;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;margin-left:8px;';
+            badge.textContent = 'Tamu';
+            document.querySelector('.user-badge').appendChild(badge);
+        }
+    }
+    
+    // ===== TANGGAL =====
+    function updateDate() {
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+    
+    // ===== TOGGLE SIDEBAR =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+    
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+        updateDate();
+        
+        // Event overlay
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+    });
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

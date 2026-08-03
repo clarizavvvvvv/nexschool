@@ -1,10 +1,3 @@
-<?php
-session_start();
-if(!isset($_SESSION['user'])) {
-    header("Location: index.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -15,7 +8,7 @@ if(!isset($_SESSION['user'])) {
 </head>
 <body>
     <div class="app-container">
-        <?php include 'partials/sidebar.php'; ?>
+        <div id="sidebarContainer"></div>
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
         
         <div class="main-content">
@@ -25,10 +18,10 @@ if(!isset($_SESSION['user'])) {
                     <h3>🗨️ Diskusi & Belajar Kelompok</h3>
                 </div>
                 <div class="topbar-right">
-                    <span style="color:#888;"><?= date('d M Y') ?></span>
+                    <span style="color:#888;" id="tanggalDisplay"></span>
                     <div class="user-badge">
-                        <img src="assets/default.png" alt="Foto" onerror="this.style.display='none'">
-                        <span><?= $_SESSION['user'] ?></span>
+                        <img src="assets/default.png" alt="Foto" id="userFoto" onerror="this.style.display='none'">
+                        <span id="userName">User</span>
                     </div>
                 </div>
             </div>
@@ -41,7 +34,7 @@ if(!isset($_SESSION['user'])) {
                     <button class="btn-secondary tab-btn" data-tab="whiteboard" style="background:#e8edf3;">Whiteboard</button>
                 </div>
                 
-                <!-- KONTEN TAB -->
+                <!-- TAB RUANG KELAS -->
                 <div id="tabRuang" class="tab-content">
                     <div class="chat-area">
                         <div class="chat-list">
@@ -78,6 +71,7 @@ if(!isset($_SESSION['user'])) {
                     </div>
                 </div>
                 
+                <!-- TAB TUGAS KELOMPOK -->
                 <div id="tabTugas" class="tab-content" style="display:none;">
                     <h4>📋 Tugas Kelompok</h4>
                     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:12px;">
@@ -99,6 +93,7 @@ if(!isset($_SESSION['user'])) {
                     </div>
                 </div>
                 
+                <!-- TAB WHITEBOARD -->
                 <div id="tabWhiteboard" class="tab-content" style="display:none;">
                     <h4>✏️ Whiteboard Bersama</h4>
                     <div style="background:#f7f9fc;border:2px dashed #ccc;border-radius:12px;height:300px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#888;margin-top:12px;cursor:pointer;" onclick="alert('✏️ Whiteboard siap digunakan! Silakan mulai menggambar.')">
@@ -110,19 +105,37 @@ if(!isset($_SESSION['user'])) {
             </div>
         </div>
     </div>
-    
+
     <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if(sidebar && overlay) {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
+    // ===== LOAD SIDEBAR =====
+    fetch('partials/sidebar.html')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('sidebarContainer').innerHTML = html;
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                if(link.getAttribute('href') === 'diskusi.html') link.classList.add('active');
+            });
+        });
+    
+    // ===== CEK LOGIN =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn) window.location.href = 'index.html';
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userFoto').src = `assets/${user.foto}`;
         }
     }
     
+    // ===== TANGGAL =====
+    function updateDate() {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+    
     // ===== TAB NAVIGASI =====
-    document.addEventListener('DOMContentLoaded', function() {
+    function initTabs() {
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = {
             ruang: document.getElementById('tabRuang'),
@@ -132,32 +145,27 @@ if(!isset($_SESSION['user'])) {
         
         tabBtns.forEach(btn => {
             btn.addEventListener('click', function() {
-                // Reset semua tombol
                 tabBtns.forEach(b => {
                     b.className = 'btn-secondary';
                     b.style.background = '#e8edf3';
                     b.style.color = '#333';
                 });
-                
-                // Aktifkan tombol yang diklik
                 this.className = 'btn-primary';
                 this.style.background = '#2d6a9f';
                 this.style.color = '#fff';
                 
-                // Sembunyikan semua konten
                 Object.values(tabContents).forEach(content => {
                     if(content) content.style.display = 'none';
                 });
                 
-                // Tampilkan konten sesuai tab
                 const tab = this.getAttribute('data-tab');
-                if(tabContents[tab]) {
-                    tabContents[tab].style.display = 'block';
-                }
+                if(tabContents[tab]) tabContents[tab].style.display = 'block';
             });
         });
-        
-        // ===== KIRIM PESAN =====
+    }
+    
+    // ===== KIRIM PESAN =====
+    function initChat() {
         const kirimPesan = document.getElementById('kirimPesan');
         const chatInput = document.getElementById('chatInput');
         const chatWindow = document.querySelector('.chat-window');
@@ -170,20 +178,41 @@ if(!isset($_SESSION['user'])) {
                     msgDiv.className = 'message';
                     msgDiv.innerHTML = `<strong>Kamu:</strong> ${msg}`;
                     const whiteboard = chatWindow.querySelector('.whiteboard-placeholder');
-                    if(whiteboard) {
-                        chatWindow.insertBefore(msgDiv, whiteboard);
-                    } else {
-                        chatWindow.appendChild(msgDiv);
-                    }
+                    if(whiteboard) chatWindow.insertBefore(msgDiv, whiteboard);
+                    else chatWindow.appendChild(msgDiv);
                     chatInput.value = '';
                     chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
             });
-            
             chatInput.addEventListener('keypress', function(e) {
-                if(e.key === 'Enter') {
-                    kirimPesan.click();
-                }
+                if(e.key === 'Enter') kirimPesan.click();
+            });
+        }
+    }
+    
+    // ===== TOGGLE SIDEBAR =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+    
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLogin();
+        updateDate();
+        initTabs();
+        initChat();
+        
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
             });
         }
     });
