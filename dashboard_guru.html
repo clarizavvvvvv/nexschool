@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Guru - NexSchool</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div id="sidebarContainer"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h3>📚 Dashboard Guru</h3>
+                </div>
+                <div class="topbar-right">
+                    <span style="color:#888;" id="tanggalDisplay"></span>
+                    <div class="user-badge">
+                        <img src="assets/default.png" alt="Foto" class="userFoto" onerror="this.style.display='none'">
+                        <span class="userName">User</span>
+                        <span style="background:#f5a623;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;">Guru</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-card" style="background:linear-gradient(135deg,#1a3a5c,#f5a623);color:#fff;border:none;">
+                <h3 id="welcomeText">Selamat Datang, Guru! 👨‍🏫</h3>
+                <p style="opacity:0.9;" id="userInfo">NIP: -</p>
+                <p style="margin-top:8px;font-size:14px;opacity:0.8;">Kelola aktivitas belajar siswa di sini!</p>
+            </div>
+            
+            <!-- FITUR GURU -->
+            <div class="card-grid">
+                <div class="card" onclick="location.href='diskusi_guru.html'">
+                    <div class="card-icon">🗨️</div>
+                    <h4>Kelola Diskusi</h4>
+                    <p>Buat & kelola grup diskusi, beri tugas.</p>
+                    <span class="badge">✏️ Bisa Edit</span>
+                </div>
+                
+                <div class="card" onclick="location.href='ekstrakurikuler_guru.html'">
+                    <div class="card-icon">🏫</div>
+                    <h4>Kelola Ekstrakurikuler</h4>
+                    <p>Tambah/edit klub & jadwal kegiatan.</p>
+                    <span class="badge">✏️ Bisa Edit</span>
+                </div>
+                
+                <div class="card" onclick="location.href='konseling_guru.html'">
+                    <div class="card-icon">💚</div>
+                    <h4>Kelola Konseling</h4>
+                    <p>Lihat curhat & balas siswa.</p>
+                    <span class="badge">✏️ Bisa Balas</span>
+                </div>
+            </div>
+            
+            <!-- STATISTIK GURU -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 0;">
+                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="font-size:24px;">👥</div>
+                    <div style="font-size:20px;font-weight:700;">25</div>
+                    <small style="color:#888;">Siswa Aktif</small>
+                </div>
+                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="font-size:24px;">📚</div>
+                    <div style="font-size:20px;font-weight:700;">8</div>
+                    <small style="color:#888;">Kelas Diajar</small>
+                </div>
+                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="font-size:24px;">💬</div>
+                    <div style="font-size:20px;font-weight:700;">3</div>
+                    <small style="color:#888;">Curhat Menunggu</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== CEK LOGIN & ROLE =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn || isLoggedIn !== 'true') {
+            window.location.href = 'index.html';
+            return false;
+        }
+        
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user && user.role === 'siswa') {
+            window.location.href = 'dashboard_siswa.html';
+            return false;
+        }
+        return true;
+    }
+    
+    // ===== GET USER DATA =====
+    function getUserData() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+    
+    // ===== UPDATE USER BADGE =====
+    function updateUserBadge() {
+        const user = getUserData();
+        if(user) {
+            document.querySelectorAll('.userName').forEach(el => el.textContent = user.name);
+            document.querySelectorAll('.userFoto').forEach(el => {
+                el.src = `assets/${user.foto || 'default.png'}`;
+            });
+            document.getElementById('welcomeText').textContent = `Selamat Datang, ${user.name}! 👨‍🏫`;
+            document.getElementById('userInfo').textContent = `NIP: ${user.nis}`;
+        }
+    }
+    
+    // ===== TANGGAL =====
+    function updateDate() {
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+    
+    // ===== LOAD SIDEBAR GURU =====
+    function loadSidebar() {
+        const container = document.getElementById('sidebarContainer');
+        if(!container) return;
+        
+        fetch('partials/sidebar_guru.html')
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    if(link.getAttribute('href') === 'dashboard_guru.html') {
+                        link.classList.add('active');
+                    }
+                });
+                updateUserBadge();
+            })
+            .catch(() => {
+                container.innerHTML = `
+                    <nav class="sidebar" id="sidebar">
+                        <div class="sidebar-brand">
+                            <h2>Nex<span>School</span></h2>
+                            <small>Guru</small>
+                        </div>
+                        <ul class="sidebar-menu">
+                            <li><a href="dashboard_guru.html" class="active"><span class="icon">📊</span> Beranda</a></li>
+                            <li><a href="diskusi_guru.html"><span class="icon">🗨️</span> Kelola Diskusi</a></li>
+                            <li><a href="ekstrakurikuler_guru.html"><span class="icon">🏫</span> Kelola Ekstra</a></li>
+                            <li><a href="konseling_guru.html"><span class="icon">💚</span> Kelola Konseling</a></li>
+                            <li><a href="profil.html"><span class="icon">👤</span> Profil</a></li>
+                            <li style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;">
+                                <a href="#" onclick="logout(); return false;" style="color:rgba(255,100,100,0.7);">
+                                    <span class="icon">🚪</span> Keluar
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                `;
+            });
+    }
+    
+    // ===== TOGGLE SIDEBAR =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+    
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        if(!checkLogin()) return;
+        loadSidebar();
+        updateDate();
+        updateUserBadge();
+        
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+    });
+    </script>
+    <script src="js/logout.js"></script>
+</body>
+</html>

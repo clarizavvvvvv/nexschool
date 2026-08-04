@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Ekstrakurikuler - Guru</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+        .modal-content h3 {
+            margin-bottom: 16px;
+        }
+        .modal-content .input-group {
+            margin-bottom: 14px;
+        }
+        .modal-content .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .modal-content .input-group input,
+        .modal-content .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e7ef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-success {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .btn-warning {
+            background: #f5a623;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+        .btn-warning:hover {
+            background: #d49520;
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            z-index: 99999;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .toast.success { background: #28a745; }
+        .toast.error { background: #dc3545; }
+        .toast.info { background: #2d6a9f; }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .klub-card {
+            background: #f7f9fc;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        .klub-card:hover {
+            transform: translateY(-4px);
+            border-color: #2d6a9f;
+        }
+        .klub-card .ikon {
+            font-size: 40px;
+        }
+        .klub-card h5 {
+            margin: 8px 0 4px;
+            font-size: 16px;
+        }
+        .klub-card .jadwal {
+            font-size: 13px;
+            color: #888;
+        }
+        .klub-card .member-count {
+            font-size: 12px;
+            color: #2d6a9f;
+            margin-top: 4px;
+        }
+        .klub-card .actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .empty-state .icon {
+            font-size: 60px;
+            margin-bottom: 12px;
+        }
+        .stat-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .stat-box .number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a3a5c;
+        }
+        .stat-box small {
+            color: #888;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div id="sidebarContainer"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h3>🏫 Kelola Ekstrakurikuler</h3>
+                </div>
+                <div class="topbar-right">
+                    <span style="color:#888;" id="tanggalDisplay"></span>
+                    <div class="user-badge">
+                        <img src="assets/default.png" alt="Foto" class="userFoto" onerror="this.style.display='none'">
+                        <span class="userName">User</span>
+                        <span style="background:#f5a623;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;">Guru</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATISTIK -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;">
+                <div class="stat-box">
+                    <div class="number" id="totalKlub">0</div>
+                    <small>Total Klub</small>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="totalSiswa">0</div>
+                    <small>Total Siswa</small>
+                </div>
+                <div class="stat-box">
+                    <div class="number" id="totalAbsen">0</div>
+                    <small>Kehadiran Hari Ini</small>
+                </div>
+            </div>
+
+            <!-- TOMBOL TAMBAH -->
+            <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+                <button class="btn-success" onclick="openTambahModal()" style="padding:12px 24px;font-size:15px;">
+                    ➕ Tambah Klub Baru
+                </button>
+            </div>
+
+            <!-- DAFTAR KLUB -->
+            <div class="page-card">
+                <h4>📋 Daftar Klub / UKM</h4>
+                <div id="klubList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:12px;">
+                    <!-- Akan di-render oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- DAFTAR SISWA PER KLUB -->
+            <div class="page-card">
+                <h4>👥 Daftar Siswa per Klub</h4>
+                <div id="siswaPerKlub">
+                    <!-- Akan di-render oleh JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL TAMBAH KLUB ===== -->
+    <div class="modal" id="tambahModal">
+        <div class="modal-content">
+            <h3>➕ Tambah Klub Baru</h3>
+            <div class="input-group">
+                <label>🏷️ Nama Klub</label>
+                <input type="text" id="inputNamaKlub" placeholder="Contoh: Futsal, Robotics, dll">
+            </div>
+            <div class="input-group">
+                <label>📅 Jadwal</label>
+                <input type="text" id="inputJadwal" placeholder="Contoh: Senin & Rabu, 15:00-17:00">
+            </div>
+            <div class="input-group">
+                <label>🎨 Icon</label>
+                <select id="inputIkon">
+                    <option value="⚽">⚽ Sepak Bola</option>
+                    <option value="🏀">🏀 Basket</option>
+                    <option value="🎵">🎵 Musik</option>
+                    <option value="💻">💻 Coding</option>
+                    <option value="🎭">🎭 Teater</option>
+                    <option value="📸">📸 Fotografi</option>
+                    <option value="🎨">🎨 Seni</option>
+                    <option value="🧪">🧪 Sains</option>
+                    <option value="📚">📚 Literasi</option>
+                    <option value="🎮">🎮 Gaming</option>
+                    <option value="🏸">🏸 Badminton</option>
+                    <option value="🏊">🏊 Renang</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeTambahModal()">Batal</button>
+                <button class="btn-success" onclick="tambahKlub()">➕ Tambah</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL KONFIRMASI HAPUS ===== -->
+    <div class="modal" id="hapusModal">
+        <div class="modal-content" style="text-align:center;">
+            <div style="font-size:48px;">🗑️</div>
+            <h3>Hapus Klub?</h3>
+            <p id="hapusMessage" style="color:#666;margin:8px 0 16px;">Apakah Anda yakin ingin menghapus klub ini?</p>
+            <div class="modal-actions" style="justify-content:center;">
+                <button class="btn-secondary" onclick="closeHapusModal()">Batal</button>
+                <button class="btn-danger" id="confirmHapusBtn" onclick="confirmHapus()">🗑️ Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL EDIT KLUB ===== -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>✏️ Edit Klub</h3>
+            <input type="hidden" id="editKlubId">
+            <div class="input-group">
+                <label>🏷️ Nama Klub</label>
+                <input type="text" id="editNamaKlub" placeholder="Nama Klub">
+            </div>
+            <div class="input-group">
+                <label>📅 Jadwal</label>
+                <input type="text" id="editJadwal" placeholder="Jadwal">
+            </div>
+            <div class="input-group">
+                <label>🎨 Icon</label>
+                <select id="editIkon">
+                    <option value="⚽">⚽ Sepak Bola</option>
+                    <option value="🏀">🏀 Basket</option>
+                    <option value="🎵">🎵 Musik</option>
+                    <option value="💻">💻 Coding</option>
+                    <option value="🎭">🎭 Teater</option>
+                    <option value="📸">📸 Fotografi</option>
+                    <option value="🎨">🎨 Seni</option>
+                    <option value="🧪">🧪 Sains</option>
+                    <option value="📚">📚 Literasi</option>
+                    <option value="🎮">🎮 Gaming</option>
+                    <option value="🏸">🏸 Badminton</option>
+                    <option value="🏊">🏊 Renang</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeEditModal()">Batal</button>
+                <button class="btn-warning" onclick="saveEditKlub()" style="background:#f5a623;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:600;">💾 Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== DATA KLUB (Disimpan di localStorage) =====
+    let klubData = [];
+    let siswaData = [];
+    let hapusTargetId = null;
+
+    // ===== LOAD DATA DARI LOCALSTORAGE =====
+    function loadData() {
+        const stored = localStorage.getItem('klubData');
+        if(stored) {
+            klubData = JSON.parse(stored);
+        } else {
+            // Data default
+            klubData = [
+                { id: 1, nama: 'Basket', jadwal: 'Senin & Rabu, 15:00-17:00', ikon: '🏀', anggota: ['Ahmad Rizki', 'Doni Pratama'] },
+                { id: 2, nama: 'Paduan Suara', jadwal: 'Selasa & Kamis, 16:30-18:00', ikon: '🎵', anggota: ['Siti Rahma'] },
+                { id: 3, nama: 'Coding Club', jadwal: 'Jumat, 17:00-19:00', ikon: '💻', anggota: ['Ahmad Rizki'] }
+            ];
+            saveData();
+        }
+
+        const storedSiswa = localStorage.getItem('siswaData');
+        if(storedSiswa) {
+            siswaData = JSON.parse(storedSiswa);
+        } else {
+            siswaData = [
+                { nama: 'Ahmad Rizki', kelas: 'XII IPA 1', klub: ['Basket', 'Coding Club'] },
+                { nama: 'Siti Rahma', kelas: 'XII IPA 2', klub: ['Paduan Suara'] },
+                { nama: 'Doni Pratama', kelas: 'XI IPS 1', klub: ['Basket'] }
+            ];
+            localStorage.setItem('siswaData', JSON.stringify(siswaData));
+        }
+    }
+
+    // ===== SAVE DATA KE LOCALSTORAGE =====
+    function saveData() {
+        localStorage.setItem('klubData', JSON.stringify(klubData));
+        localStorage.setItem('siswaData', JSON.stringify(siswaData));
+    }
+
+    // ===== RENDER DAFTAR KLUB =====
+    function renderKlub() {
+        const container = document.getElementById('klubList');
+        if(!container) return;
+
+        if(klubData.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="grid-column:1/-1;">
+                    <div class="icon">📭</div>
+                    <p>Belum ada klub. Klik "Tambah Klub Baru" untuk membuat.</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = klubData.map(klub => `
+                <div class="klub-card">
+                    <div class="ikon">${klub.ikon}</div>
+                    <h5>${klub.nama}</h5>
+                    <div class="jadwal">📅 ${klub.jadwal}</div>
+                    <div class="member-count">👥 ${klub.anggota ? klub.anggota.length : 0} anggota</div>
+                    <div class="actions">
+                        <button class="btn-warning btn-sm" onclick="openEditModal(${klub.id})">✏️ Edit</button>
+                        <button class="btn-danger btn-sm" onclick="openHapusModal(${klub.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistik
+        document.getElementById('totalKlub').textContent = klubData.length;
+        let totalSiswa = 0;
+        klubData.forEach(k => {
+            if(k.anggota) totalSiswa += k.anggota.length;
+        });
+        document.getElementById('totalSiswa').textContent = totalSiswa;
+        document.getElementById('totalAbsen').textContent = Math.floor(Math.random() * 10) + 5;
+
+        renderSiswaPerKlub();
+    }
+
+    // ===== RENDER SISWA PER KLUB =====
+    function renderSiswaPerKlub() {
+        const container = document.getElementById('siswaPerKlub');
+        if(!container) return;
+
+        if(klubData.length === 0) {
+            container.innerHTML = `<p style="color:#888;text-align:center;padding:20px;">Belum ada data siswa.</p>`;
+            return;
+        }
+
+        container.innerHTML = klubData.map(klub => `
+            <div style="background:#f7f9fc;padding:12px 16px;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+                <div>
+                    <strong>${klub.ikon} ${klub.nama}</strong>
+                    <span style="color:#888;font-size:13px;margin-left:12px;">${klub.anggota ? klub.anggota.length : 0} anggota</span>
+                </div>
+                <div style="font-size:13px;color:#555;">
+                    ${klub.anggota && klub.anggota.length > 0 ? klub.anggota.join(', ') : 'Belum ada anggota'}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ===== TAMBAH KLUB =====
+    function tambahKlub() {
+        const nama = document.getElementById('inputNamaKlub').value.trim();
+        const jadwal = document.getElementById('inputJadwal').value.trim();
+        const ikon = document.getElementById('inputIkon').value;
+
+        if(!nama) {
+            showToast('⚠️ Nama klub harus diisi!', 'error');
+            return;
+        }
+        if(!jadwal) {
+            showToast('⚠️ Jadwal harus diisi!', 'error');
+            return;
+        }
+
+        // Cek duplikat
+        if(klubData.some(k => k.nama.toLowerCase() === nama.toLowerCase())) {
+            showToast(`⚠️ Klub "${nama}" sudah ada!`, 'error');
+            return;
+        }
+
+        const newKlub = {
+            id: Date.now(),
+            nama: nama,
+            jadwal: jadwal,
+            ikon: ikon,
+            anggota: []
+        };
+
+        klubData.push(newKlub);
+        saveData();
+        renderKlub();
+        closeTambahModal();
+        showToast(`✅ Klub "${nama}" berhasil ditambahkan!`, 'success');
+    }
+
+    // ===== BUKA MODAL TAMBAH =====
+    function openTambahModal() {
+        document.getElementById('tambahModal').classList.add('active');
+        document.getElementById('inputNamaKlub').value = '';
+        document.getElementById('inputJadwal').value = '';
+        document.getElementById('inputNamaKlub').focus();
+    }
+
+    // ===== TUTUP MODAL TAMBAH =====
+    function closeTambahModal() {
+        document.getElementById('tambahModal').classList.remove('active');
+    }
+
+    // ===== BUKA MODAL HAPUS =====
+    function openHapusModal(id) {
+        const klub = klubData.find(k => k.id === id);
+        if(!klub) return;
+        
+        hapusTargetId = id;
+        document.getElementById('hapusMessage').textContent = 
+            `Apakah Anda yakin ingin menghapus klub "${klub.nama}"? ${klub.anggota && klub.anggota.length > 0 ? `\n\n⚠️ Klub ini memiliki ${klub.anggota.length} anggota yang akan terpengaruh.` : ''}`;
+        document.getElementById('hapusModal').classList.add('active');
+    }
+
+    // ===== TUTUP MODAL HAPUS =====
+    function closeHapusModal() {
+        document.getElementById('hapusModal').classList.remove('active');
+        hapusTargetId = null;
+    }
+
+    // ===== KONFIRMASI HAPUS =====
+    function confirmHapus() {
+        if(hapusTargetId === null) return;
+        
+        const klub = klubData.find(k => k.id === hapusTargetId);
+        if(!klub) return;
+
+        // Hapus klub dari data siswa
+        siswaData.forEach(siswa => {
+            siswa.klub = siswa.klub.filter(k => k !== klub.nama);
+        });
+        localStorage.setItem('siswaData', JSON.stringify(siswaData));
+
+        // Hapus klub
+        klubData = klubData.filter(k => k.id !== hapusTargetId);
+        saveData();
+        renderKlub();
+        closeHapusModal();
+        showToast(`🗑️ Klub "${klub.nama}" berhasil dihapus!`, 'info');
+    }
+
+    // ===== BUKA MODAL EDIT =====
+    function openEditModal(id) {
+        const klub = klubData.find(k => k.id === id);
+        if(!klub) return;
+
+        document.getElementById('editKlubId').value = id;
+        document.getElementById('editNamaKlub').value = klub.nama;
+        document.getElementById('editJadwal').value = klub.jadwal;
+        document.getElementById('editIkon').value = klub.ikon;
+        document.getElementById('editModal').classList.add('active');
+    }
+
+    // ===== TUTUP MODAL EDIT =====
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('active');
+    }
+
+    // ===== SAVE EDIT KLUB =====
+    function saveEditKlub() {
+        const id = parseInt(document.getElementById('editKlubId').value);
+        const nama = document.getElementById('editNamaKlub').value.trim();
+        const jadwal = document.getElementById('editJadwal').value.trim();
+        const ikon = document.getElementById('editIkon').value;
+
+        if(!nama) {
+            showToast('⚠️ Nama klub harus diisi!', 'error');
+            return;
+        }
+        if(!jadwal) {
+            showToast('⚠️ Jadwal harus diisi!', 'error');
+            return;
+        }
+
+        const klub = klubData.find(k => k.id === id);
+        if(!klub) return;
+
+        // Update nama di data siswa jika berubah
+        if(klub.nama !== nama) {
+            siswaData.forEach(siswa => {
+                const index = siswa.klub.indexOf(klub.nama);
+                if(index !== -1) {
+                    siswa.klub[index] = nama;
+                }
+            });
+            localStorage.setItem('siswaData', JSON.stringify(siswaData));
+        }
+
+        klub.nama = nama;
+        klub.jadwal = jadwal;
+        klub.ikon = ikon;
+
+        saveData();
+        renderKlub();
+        closeEditModal();
+        showToast(`✅ Klub "${nama}" berhasil diupdate!`, 'success');
+    }
+
+    // ===== SHOW TOAST =====
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s';
+            setTimeout(() => toast.remove(), 500);
+        }, 3500);
+    }
+
+    // ===== CEK LOGIN & ROLE =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn || isLoggedIn !== 'true') {
+            window.location.href = 'index.html';
+            return false;
+        }
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user && user.role === 'siswa') {
+            window.location.href = 'ekstrakurikuler_siswa.html';
+            return false;
+        }
+        return true;
+    }
+
+    // ===== GET USER DATA =====
+    function getUserData() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+
+    // ===== UPDATE USER BADGE =====
+    function updateUserBadge() {
+        const user = getUserData();
+        if(user) {
+            document.querySelectorAll('.userName').forEach(el => el.textContent = user.name);
+            document.querySelectorAll('.userFoto').forEach(el => {
+                el.src = `assets/${user.foto || 'default.png'}`;
+            });
+        }
+    }
+
+    // ===== TANGGAL =====
+    function updateDate() {
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+
+    // ===== LOAD SIDEBAR =====
+    function loadSidebar() {
+        const container = document.getElementById('sidebarContainer');
+        if(!container) return;
+        fetch('partials/sidebar_guru.html')
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    if(link.getAttribute('href') === 'ekstrakurikuler_guru.html') {
+                        link.classList.add('active');
+                    }
+                });
+                updateUserBadge();
+            });
+    }
+
+    // ===== TOGGLE SIDEBAR =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+
+    // ===== CLOSE MODAL WITH ESC =====
+    document.addEventListener('keydown', function(e) {
+        if(e.key === 'Escape') {
+            closeTambahModal();
+            closeHapusModal();
+            closeEditModal();
+        }
+    });
+
+    // ===== CLICK OUTSIDE MODAL TO CLOSE =====
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if(e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    });
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        if(!checkLogin()) return;
+        loadData();
+        loadSidebar();
+        updateDate();
+        updateUserBadge();
+        renderKlub();
+        
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Enter key untuk submit tambah
+        document.getElementById('inputNamaKlub').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') tambahKlub();
+        });
+        document.getElementById('inputJadwal').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') tambahKlub();
+        });
+    });
+    </script>
+    <script src="js/logout.js"></script>
+</body>
+</html>

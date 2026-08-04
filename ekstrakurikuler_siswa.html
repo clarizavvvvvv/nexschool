@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ekstrakurikuler - NexSchool</title>
+    <title>Ekstrakurikuler - Siswa</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,33 +15,15 @@
             <div class="topbar">
                 <div style="display:flex;align-items:center;gap:12px;">
                     <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h3>🏫 Portal Ekstrakurikuler</h3>
+                    <h3>🏫 Ekstrakurikuler</h3>
                 </div>
                 <div class="topbar-right">
                     <span style="color:#888;" id="tanggalDisplay"></span>
                     <div class="user-badge">
-                        <img src="assets/default.png" alt="Foto" id="userFoto" onerror="this.style.display='none'">
-                        <span id="userName">User</span>
+                        <img src="assets/default.png" alt="Foto" class="userFoto" onerror="this.style.display='none'">
+                        <span class="userName">User</span>
+                        <span style="background:#28a745;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;">Siswa</span>
                     </div>
-                </div>
-            </div>
-            
-            <!-- STATISTIK -->
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;">
-                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-                    <div style="font-size:28px;">🏆</div>
-                    <div style="font-size:20px;font-weight:700;">3</div>
-                    <small style="color:#888;">Klub Diikuti</small>
-                </div>
-                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-                    <div style="font-size:28px;">📅</div>
-                    <div style="font-size:20px;font-weight:700;">2</div>
-                    <small style="color:#888;">Latihan Hari Ini</small>
-                </div>
-                <div style="background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-                    <div style="font-size:28px;">✅</div>
-                    <div style="font-size:20px;font-weight:700;">8</div>
-                    <small style="color:#888;">Total Kehadiran</small>
                 </div>
             </div>
             
@@ -54,52 +36,39 @@
                             <strong>🏀 Basket</strong>
                             <br><small style="color:#888;">15:00 - 17:00 (GOR)</small>
                         </div>
-                        <button class="btn-primary" onclick="presensi('Basket')" style="font-size:12px;padding:6px 16px;">Hadir</button>
+                        <button class="btn-primary" onclick="absen('Basket')" style="font-size:12px;padding:6px 16px;">✅ Absen</button>
                     </li>
                     <li style="padding:10px 0;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;align-items:center;">
                         <div>
                             <strong>🎵 Paduan Suara</strong>
                             <br><small style="color:#888;">16:30 - 18:00 (Aula)</small>
                         </div>
-                        <button class="btn-secondary" style="font-size:12px;padding:6px 16px;" disabled>Belum Mulai</button>
-                    </li>
-                    <li style="padding:10px 0;display:flex;justify-content:space-between;align-items:center;">
-                        <div>
-                            <strong>💻 Coding Club</strong>
-                            <br><small style="color:#888;">17:00 - 19:00 (Lab Komputer)</small>
-                        </div>
-                        <button class="btn-secondary" style="font-size:12px;padding:6px 16px;" disabled>Belum Mulai</button>
+                        <button class="btn-secondary" style="font-size:12px;padding:6px 16px;" disabled>⏳ Belum Mulai</button>
                     </li>
                 </ul>
             </div>
             
-            <!-- DAFTAR KLUB -->
+            <!-- DAFTAR KLUB (Siswa hanya bisa lihat & daftar) -->
             <div class="page-card">
                 <h4>📋 Daftar Klub / UKM</h4>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:12px;">
                     <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
                         <div style="font-size:40px;">🏀</div>
-                        <h5 style="margin:8px 0 4px;">Basket</h5>
+                        <h5>Basket</h5>
                         <p style="font-size:13px;color:#888;">Senin & Rabu</p>
                         <button class="btn-secondary" style="font-size:12px;width:100%;padding:8px;" disabled>✅ Sudah Gabung</button>
                     </div>
                     <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
                         <div style="font-size:40px;">🎵</div>
-                        <h5 style="margin:8px 0 4px;">Paduan Suara</h5>
+                        <h5>Paduan Suara</h5>
                         <p style="font-size:13px;color:#888;">Selasa & Kamis</p>
                         <button class="btn-primary" onclick="daftarKlub('Paduan Suara')" style="font-size:12px;width:100%;padding:8px;">Daftar</button>
                     </div>
                     <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
                         <div style="font-size:40px;">💻</div>
-                        <h5 style="margin:8px 0 4px;">Coding Club</h5>
+                        <h5>Coding Club</h5>
                         <p style="font-size:13px;color:#888;">Jumat</p>
                         <button class="btn-primary" onclick="daftarKlub('Coding Club')" style="font-size:12px;width:100%;padding:8px;">Daftar</button>
-                    </div>
-                    <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
-                        <div style="font-size:40px;">🎭</div>
-                        <h5 style="margin:8px 0 4px;">Teater</h5>
-                        <p style="font-size:13px;color:#888;">Sabtu</p>
-                        <button class="btn-primary" onclick="daftarKlub('Teater')" style="font-size:12px;width:100%;padding:8px;">Daftar</button>
                     </div>
                 </div>
             </div>
@@ -112,10 +81,6 @@
                         <div><strong>🏀 Basket</strong><br><small style="color:#888;">12 Jan 2026</small></div>
                         <span style="color:#28a745;">✅ Hadir</span>
                     </li>
-                    <li style="padding:10px 0;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;">
-                        <div><strong>🎵 Paduan Suara</strong><br><small style="color:#888;">10 Jan 2026</small></div>
-                        <span style="color:#28a745;">✅ Hadir</span>
-                    </li>
                     <li style="padding:10px 0;display:flex;justify-content:space-between;">
                         <div><strong>💻 Coding Club</strong><br><small style="color:#888;">8 Jan 2026</small></div>
                         <span style="color:#dc3545;">❌ Tidak Hadir</span>
@@ -126,11 +91,16 @@
     </div>
 
     <script>
-    // ===== FUNGSI EKSTRAKURIKULER =====
+    // ===== FUNGSI SISWA =====
+    function absen(nama) {
+        if(confirm(`Konfirmasi kehadiran untuk "${nama}"?`)) {
+            alert('✅ Presensi berhasil dicatat!');
+        }
+    }
+    
     function daftarKlub(nama) {
         if(confirm(`Yakin ingin mendaftar di ${nama}?`)) {
             alert(`✅ Berhasil mendaftar di ${nama}!`);
-            // Ubah tombol menjadi sudah gabung
             const btns = document.querySelectorAll('.ekstra-item .btn-primary');
             btns.forEach(btn => {
                 if(btn.textContent === 'Daftar') {
@@ -146,38 +116,62 @@
         }
     }
     
-    function presensi(nama) {
-        if(confirm(`Konfirmasi kehadiran untuk "${nama}"?`)) {
-            alert('✅ Presensi berhasil dicatat!');
-        }
-    }
-    
-    // ===== LOAD SIDEBAR =====
-    fetch('partials/sidebar.html')
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('sidebarContainer').innerHTML = html;
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                if(link.getAttribute('href') === 'ekstrakurikuler.html') link.classList.add('active');
-            });
-        });
-    
     // ===== CEK LOGIN =====
     function checkLogin() {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if(!isLoggedIn) window.location.href = 'index.html';
+        if(!isLoggedIn || isLoggedIn !== 'true') {
+            window.location.href = 'index.html';
+            return false;
+        }
         const user = JSON.parse(localStorage.getItem('user'));
+        if(user && user.role === 'guru') {
+            window.location.href = 'ekstrakurikuler_guru.html';
+            return false;
+        }
+        return true;
+    }
+    
+    // ===== GET USER DATA =====
+    function getUserData() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+    
+    // ===== UPDATE USER BADGE =====
+    function updateUserBadge() {
+        const user = getUserData();
         if(user) {
-            document.getElementById('userName').textContent = user.name;
-            document.getElementById('userFoto').src = `assets/${user.foto}`;
+            document.querySelectorAll('.userName').forEach(el => el.textContent = user.name);
+            document.querySelectorAll('.userFoto').forEach(el => {
+                el.src = `assets/${user.foto || 'default.png'}`;
+            });
         }
     }
     
+    // ===== TANGGAL =====
     function updateDate() {
         const options = { day: 'numeric', month: 'long', year: 'numeric' };
         document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
     }
     
+    // ===== LOAD SIDEBAR =====
+    function loadSidebar() {
+        const container = document.getElementById('sidebarContainer');
+        if(!container) return;
+        fetch('partials/sidebar_siswa.html')
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    if(link.getAttribute('href') === 'ekstrakurikuler_siswa.html') {
+                        link.classList.add('active');
+                    }
+                });
+                updateUserBadge();
+            });
+    }
+    
+    // ===== TOGGLE SIDEBAR =====
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
@@ -187,9 +181,13 @@
         }
     }
     
+    // ===== INIT =====
     document.addEventListener('DOMContentLoaded', function() {
-        checkLogin();
+        if(!checkLogin()) return;
+        loadSidebar();
         updateDate();
+        updateUserBadge();
+        
         const overlay = document.getElementById('sidebarOverlay');
         if(overlay) {
             overlay.addEventListener('click', function() {
@@ -200,6 +198,6 @@
         }
     });
     </script>
-    <script src="js/script.js"></script>
+    <script src="js/logout.js"></script>
 </body>
 </html>

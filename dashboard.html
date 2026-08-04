@@ -3,148 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - NexSchool</title>
+    <title>Login - NexSchool</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- SIDEBAR akan di-load dari partials/sidebar.html -->
-        <div id="sidebarContainer"></div>
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        
-        <div class="main-content">
-            <div class="topbar">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h3>📚 Beranda</h3>
-                </div>
-                <div class="topbar-right">
-                    <span style="color:#888;" id="tanggalDisplay"></span>
-                    <div class="user-badge" id="userBadge">
-                        <img src="assets/default.png" alt="Foto" id="userFoto" onerror="this.style.display='none'">
-                        <span id="userName">User</span>
-                    </div>
-                </div>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="assets/default.png" alt="NexSchool" style="width:60px;height:60px;border-radius:50%;background:#2d6a9f;padding:10px;">
+                <h1>Nex<span>School</span></h1>
+                <p>Belajar & Berkembang Bersama</p>
             </div>
             
-            <!-- SELAMAT DATANG -->
-            <div class="page-card" style="background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border:none;">
-                <h3 id="welcomeText">Selamat Datang, User! 👋</h3>
-                <p style="opacity:0.9;" id="userInfo">NIS: - | Kelas: -</p>
-                <p style="margin-top:8px;font-size:14px;opacity:0.8;">Yuk, mulai aktivitas belajarmu hari ini!</p>
-            </div>
-            
-            <!-- GRID FITUR UTAMA -->
-            <div class="card-grid">
-                <div class="card" onclick="location.href='diskusi.html'">
-                    <div class="card-icon">🗨️</div>
-                    <h4>Diskusi & Belajar Kelompok</h4>
-                    <p>Ruang obrolan + whiteboard bersama untuk kerja kelompok.</p>
-                    <span class="badge">5 grup aktif</span>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>📝 NIS / NIP</label>
+                    <input type="text" id="nis" placeholder="Masukkan NIS (Siswa) atau NIP (Guru)" required>
+                </div>
+                <div class="input-group">
+                    <label>👤 Nama Lengkap</label>
+                    <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required>
                 </div>
                 
-                <div class="card" onclick="location.href='ekstrakurikuler.html'">
-                    <div class="card-icon">🏫</div>
-                    <h4>Portal Ekstrakurikuler</h4>
-                    <p>Daftar klub, lihat jadwal, & presensi kegiatan sekolah.</p>
-                    <span class="badge">3 klub diikuti</span>
-                </div>
+                <div id="loginError" class="error-msg" style="display:none;">❌ NIS/NIP atau Nama salah!</div>
                 
-                <div class="card" onclick="location.href='konseling.html'">
-                    <div class="card-icon">💚</div>
-                    <h4>Konseling & BK Virtual</h4>
-                    <p>Curhat privat & jadwalkan sesi konseling dengan guru BK.</p>
-                    <span class="badge">2 sesi tersedia</span>
+                <button type="submit" class="btn-primary btn-block">Masuk</button>
+                
+                <div class="login-options">
+                    <a href="#" id="guestLogin">Masuk sebagai Tamu</a>
                 </div>
-            </div>
+            </form>
             
-            <!-- AKTIVITAS TERAKHIR -->
-            <div class="page-card">
-                <h4>📌 Aktivitas Terakhir</h4>
-                <ul style="list-style:none;padding:0;">
-                    <li style="padding:8px 0;border-bottom:1px solid #f0f4f8;">✔️ Bergabung di grup "Matematika XII" - 10 menit lalu</li>
-                    <li style="padding:8px 0;border-bottom:1px solid #f0f4f8;">✔️ Presensi hadir di "Basket" - 2 jam lalu</li>
-                    <li style="padding:8px 0;">✔️ Sesi konseling dengan Bu Ani - kemarin</li>
-                </ul>
+            <div class="login-footer">
+                <small>&copy; 2026 NexSchool - Platform Belajar Digital</small>
             </div>
         </div>
     </div>
 
     <script>
-    // ===== LOAD SIDEBAR =====
-    fetch('partials/sidebar.html')
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('sidebarContainer').innerHTML = html;
-            // Set active menu
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                if(link.getAttribute('href') === 'dashboard.html') {
-                    link.classList.add('active');
-                }
-            });
-        });
-    
-    // ===== CEK LOGIN =====
-    function checkLogin() {
+    // ===== DATA USER (Hardcoded untuk Demo) =====
+    const USERS = {
+        // GURU
+        '2026001': { 
+            nama: 'Budi Santoso', 
+            role: 'guru', 
+            kelas: '-',
+            foto: 'default.png'
+        },
+        '2026002': { 
+            nama: 'Ani Wijaya', 
+            role: 'guru', 
+            kelas: '-',
+            foto: 'default.png'
+        },
+        // SISWA
+        '2026003': { 
+            nama: 'Ahmad Rizki', 
+            role: 'siswa', 
+            kelas: 'XII IPA 1',
+            foto: 'default.png'
+        },
+        '2026004': { 
+            nama: 'Siti Rahma', 
+            role: 'siswa', 
+            kelas: 'XII IPA 2',
+            foto: 'default.png'
+        },
+        '2026005': { 
+            nama: 'Doni Pratama', 
+            role: 'siswa', 
+            kelas: 'XI IPS 1',
+            foto: 'default.png'
+        }
+    };
+
+    // ===== CEK SUDAH LOGIN =====
+    (function() {
         const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if(!isLoggedIn) {
-            window.location.href = 'index.html';
+        if(isLoggedIn === 'true') {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user && user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else if(user && user.role === 'siswa') {
+                window.location.href = 'dashboard_siswa.html';
+            }
+        }
+    })();
+
+    // ===== LOGIN HANDLER =====
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nis = document.getElementById('nis').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const errorDiv = document.getElementById('loginError');
+        
+        if(!nis || !nama) {
+            errorDiv.textContent = '⚠️ NIS/NIP dan Nama harus diisi!';
+            errorDiv.style.display = 'block';
             return;
         }
         
-        const user = JSON.parse(localStorage.getItem('user'));
-        if(!user) {
-            window.location.href = 'index.html';
-            return;
-        }
+        // Cek user di database
+        const user = USERS[nis];
         
-        // Tampilkan data user
-        document.getElementById('userName').textContent = user.name;
-        document.getElementById('userFoto').src = `assets/${user.foto}`;
-        document.getElementById('welcomeText').textContent = `Selamat Datang, ${user.name}! 👋`;
-        document.getElementById('userInfo').textContent = `NIS: ${user.nis} | Kelas: ${user.kelas}`;
-        
-        // Tampilkan badge guest jika tamu
-        if(user.isGuest) {
-            const badge = document.createElement('span');
-            badge.style.cssText = 'background:#f5a623;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;margin-left:8px;';
-            badge.textContent = 'Tamu';
-            document.querySelector('.user-badge').appendChild(badge);
+        if(user && user.nama.toLowerCase() === nama.toLowerCase()) {
+            // Simpan ke localStorage
+            const userData = {
+                nis: nis,
+                name: user.nama,
+                role: user.role,
+                kelas: user.kelas,
+                foto: user.foto
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Redirect berdasarkan role
+            if(user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else {
+                window.location.href = 'dashboard_siswa.html';
+            }
+        } else {
+            errorDiv.textContent = '❌ NIS/NIP atau Nama salah!';
+            errorDiv.style.display = 'block';
         }
-    }
+    });
     
-    // ===== TANGGAL =====
-    function updateDate() {
-        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
-    }
-    
-    // ===== TOGGLE SIDEBAR =====
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if(sidebar && overlay) {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-    }
-    
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLogin();
-        updateDate();
-        
-        // Event overlay
-        const overlay = document.getElementById('sidebarOverlay');
-        if(overlay) {
-            overlay.addEventListener('click', function() {
-                const sidebar = document.getElementById('sidebar');
-                if(sidebar) sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-            });
+    // ===== MASUK SEBAGAI TAMU =====
+    document.getElementById('guestLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        if(confirm('Masuk sebagai tamu? Akses terbatas.')) {
+            const guestData = {
+                nis: 'GUEST001',
+                name: 'Tamu NexSchool',
+                role: 'tamu',
+                kelas: '-',
+                foto: 'default.png',
+                isGuest: true
+            };
+            localStorage.setItem('user', JSON.stringify(guestData));
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard_siswa.html';
         }
     });
     </script>
-    <script src="js/script.js"></script>
 </body>
 </html>
