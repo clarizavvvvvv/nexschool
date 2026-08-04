@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konseling - Siswa</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .curhat-box {
+            background: #f0f7ff;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #2d6a9f;
+            margin-bottom: 16px;
+        }
+        .curhat-box textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #d5dce6;
+            border-radius: 8px;
+            min-height: 80px;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .konseling-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e8edf3;
+            transition: transform 0.2s;
+        }
+        .konseling-card:hover {
+            transform: translateX(4px);
+        }
+        .konseling-card .status-selesai {
+            color: #28a745;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .konseling-card .status-dijadwalkan {
+            color: #f5a623;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .konseling-card .status-terkirim {
+            color: #2d6a9f;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .konseling-card .status-dibalas {
+            color: #6f42c1;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .balasan-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            border-left: 3px solid #6f42c1;
+        }
+        .balasan-box .guru-name {
+            font-weight: 600;
+            color: #6f42c1;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            z-index: 99999;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        .toast.success { background: #28a745; }
+        .toast.error { background: #dc3545; }
+        .toast.info { background: #2d6a9f; }
+        .toast.warning { background: #f5a623; }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+        .modal-content h3 {
+            margin-bottom: 16px;
+        }
+        .modal-content .input-group {
+            margin-bottom: 14px;
+        }
+        .modal-content .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .modal-content .input-group input,
+        .modal-content .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e7ef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+        .badge-count {
+            display: inline-block;
+            background: #dc3545;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div id="sidebarContainer"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <div class="main-content">
+            <div class="topbar">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h3>💚 Konseling & Kesehatan Mental</h3>
+                </div>
+                <div class="topbar-right">
+                    <span style="color:#888;" id="tanggalDisplay"></span>
+                    <div class="user-badge">
+                        <img src="assets/default.png" alt="Foto" class="userFoto" onerror="this.style.display='none'">
+                        <span class="userName">User</span>
+                        <span style="background:#28a745;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;">Siswa</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIPS KESEHATAN MENTAL -->
+            <div class="page-card" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-left:4px solid #4caf50;">
+                <h4>🌱 Tips Kesehatan Mental Hari Ini</h4>
+                <p style="font-size:14px;color:#555;">"Jangan ragu untuk berbagi. Setiap masalah layak didengar dan ditemukan solusinya."</p>
+                <small style="color:#888;">— Tim BK NexSchool</small>
+            </div>
+
+            <!-- CURHAT ANONIM -->
+            <div class="page-card curhat-box">
+                <h4>🤫 Curhat Anonim</h4>
+                <p style="font-size:14px;color:#555;margin-bottom:8px;">
+                    Tuliskan keluhan atau perasaanmu. Identitasmu akan dirahasiakan.
+                    <span style="display:block;font-size:12px;color:#888;margin-top:4px;">
+                        ✨ Konselor akan membalas dalam 1x24 jam
+                    </span>
+                </p>
+                <textarea id="curhatText" placeholder="Tulis ceritamu di sini..."></textarea>
+                <button class="btn-primary" id="kirimCurhat" style="margin-top:10px;">
+                    📨 Kirim (Anonim)
+                </button>
+            </div>
+
+            <!-- JADWALKAN SESI -->
+            <div class="page-card">
+                <h4>📅 Jadwalkan Sesi Konseling</h4>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;">Pilih Guru BK</label>
+                        <select id="guruBK" style="width:100%;padding:10px;border:2px solid #e0e7ef;border-radius:8px;">
+                            <option value="Bu Ani - BK">Bu Ani - BK</option>
+                            <option value="Pak Budi - BK">Pak Budi - BK</option>
+                            <option value="Bu Cici - Konselor">Bu Cici - Konselor</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:13px;font-weight:600;">Tanggal & Jam</label>
+                        <input type="datetime-local" id="jadwalKonseling" style="width:100%;padding:10px;border:2px solid #e0e7ef;border-radius:8px;">
+                    </div>
+                </div>
+                <button class="btn-primary" id="ajukanJadwal" style="margin-top:12px;">📅 Ajukan Jadwal</button>
+            </div>
+
+            <!-- RIWAYAT KONSELING -->
+            <div class="page-card">
+                <h4>
+                    📋 Riwayat Konseling
+                    <span class="badge-count" id="totalRiwayat">0</span>
+                </h4>
+                <div id="riwayatKonseling" style="margin-top:12px;">
+                    <!-- Akan di-render oleh JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL DETAIL KONSELING ===== -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <h3 id="detailTitle">Detail Konseling</h3>
+            <div id="detailContent">
+                <!-- Akan diisi oleh JavaScript -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeDetailModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== DATA KONSELING (Disimpan di localStorage) =====
+    let konselingData = [];
+
+    // ===== LOAD DATA DARI LOCALSTORAGE =====
+    function loadKonselingData() {
+        const stored = localStorage.getItem('konselingSiswaData');
+        if(stored) {
+            konselingData = JSON.parse(stored);
+        } else {
+            // Data default
+            konselingData = [
+                {
+                    id: 1,
+                    jenis: 'curhat',
+                    pesan: 'Saya merasa cemas menghadapi ujian akhir. Bagaimana cara mengatasi kecemasan ini?',
+                    tanggal: '2026-01-12T14:00',
+                    status: 'dibalas',
+                    balasan: 'Halo, terima kasih sudah berbagi. Kecemasan menjelang ujian adalah hal yang wajar. Coba lakukan teknik pernapasan 4-7-8 dan buat jadwal belajar yang teratur. Semangat! - Bu Ani',
+                    guru: 'Bu Ani - BK'
+                },
+                {
+                    id: 2,
+                    jenis: 'jadwal',
+                    pesan: 'Konsultasi karir',
+                    tanggal: '2026-01-20T15:30',
+                    status: 'dijadwalkan',
+                    balasan: '',
+                    guru: 'Pak Budi - BK'
+                },
+                {
+                    id: 3,
+                    jenis: 'curhat',
+                    pesan: 'Saya kesulitan bergaul dengan teman sekelas. Saya merasa dikucilkan.',
+                    tanggal: '2026-01-05T20:15',
+                    status: 'terkirim',
+                    balasan: '',
+                    guru: '-'
+                }
+            ];
+            localStorage.setItem('konselingSiswaData', JSON.stringify(konselingData));
+        }
+    }
+
+    // ===== SAVE DATA =====
+    function saveKonselingData() {
+        localStorage.setItem('konselingSiswaData', JSON.stringify(konselingData));
+    }
+
+    // ===== RENDER RIWAYAT =====
+    function renderRiwayat() {
+        const container = document.getElementById('riwayatKonseling');
+        if(!container) return;
+
+        if(konselingData.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:30px;color:#888;">
+                    <div style="font-size:40px;">📭</div>
+                    <p>Belum ada riwayat konseling.</p>
+                    <p style="font-size:13px;">Mulai curhat atau jadwalkan sesi di atas.</p>
+                </div>
+            `;
+        } else {
+            // Urutkan dari yang terbaru
+            const sorted = [...konselingData].reverse();
+            
+            container.innerHTML = sorted.map(item => {
+                let statusClass = '';
+                let statusText = '';
+                let statusIcon = '';
+                
+                switch(item.status) {
+                    case 'selesai':
+                        statusClass = 'status-selesai';
+                        statusText = '✅ Selesai';
+                        statusIcon = '✅';
+                        break;
+                    case 'dijadwalkan':
+                        statusClass = 'status-dijadwalkan';
+                        statusText = '⏳ Dijadwalkan';
+                        statusIcon = '📅';
+                        break;
+                    case 'terkirim':
+                        statusClass = 'status-terkirim';
+                        statusText = '📨 Terkirim';
+                        statusIcon = '📨';
+                        break;
+                    case 'dibalas':
+                        statusClass = 'status-dibalas';
+                        statusText = '💬 Dibalas';
+                        statusIcon = '💬';
+                        break;
+                    default:
+                        statusClass = 'status-terkirim';
+                        statusText = '📨 Terkirim';
+                        statusIcon = '📨';
+                }
+
+                const tanggal = new Date(item.tanggal);
+                const tanggalStr = tanggal.toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const isCurhat = item.jenis === 'curhat';
+                const icon = isCurhat ? '🤫' : '📅';
+                const label = isCurhat ? 'Curhat Anonim' : 'Sesi Konseling';
+
+                return `
+                    <div class="konseling-card" onclick="openDetailModal(${item.id})" style="cursor:pointer;">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;">
+                            <div>
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span style="font-size:18px;">${icon}</span>
+                                    <strong>${label}</strong>
+                                </div>
+                                <div style="font-size:14px;color:#555;margin-top:4px;">
+                                    ${isCurhat ? item.pesan.substring(0, 60) + (item.pesan.length > 60 ? '...' : '') : item.pesan}
+                                </div>
+                                <div style="font-size:12px;color:#888;margin-top:4px;">
+                                    🕐 ${tanggalStr}
+                                    ${item.guru && item.guru !== '-' ? ` | 👨‍🏫 ${item.guru}` : ''}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="${statusClass}">${statusIcon} ${statusText}</span>
+                            </div>
+                        </div>
+                        ${item.status === 'dibalas' && item.balasan ? `
+                            <div class="balasan-box">
+                                <div class="guru-name">💬 ${item.guru || 'Konselor'}:</div>
+                                <p style="margin:4px 0 0;font-size:14px;">${item.balasan}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update total
+        document.getElementById('totalRiwayat').textContent = konselingData.length;
+    }
+
+    // ===== KIRIM CURHAT =====
+    function kirimCurhat() {
+        const textarea = document.getElementById('curhatText');
+        const pesan = textarea.value.trim();
+        
+        if(!pesan) {
+            showToast('⚠️ Silakan tulis curhatmu terlebih dahulu.', 'error');
+            return;
+        }
+
+        if(pesan.length < 10) {
+            showToast('⚠️ Curhat minimal 10 karakter agar lebih jelas.', 'warning');
+            return;
+        }
+
+        const newCurhat = {
+            id: Date.now(),
+            jenis: 'curhat',
+            pesan: pesan,
+            tanggal: new Date().toISOString(),
+            status: 'terkirim',
+            balasan: '',
+            guru: '-'
+        };
+
+        konselingData.push(newCurhat);
+        saveKonselingData();
+        renderRiwayat();
+        textarea.value = '';
+        showToast('✅ Curhat berhasil dikirim! Konselor akan merespon dalam 1x24 jam.', 'success');
+    }
+
+    // ===== AJUKAN JADWAL =====
+    function ajukanJadwal() {
+        const guru = document.getElementById('guruBK').value;
+        const datetime = document.getElementById('jadwalKonseling').value;
+        
+        if(!datetime) {
+            showToast('⚠️ Silakan pilih tanggal dan jam terlebih dahulu.', 'error');
+            return;
+        }
+
+        const tanggal = new Date(datetime);
+        const tanggalStr = tanggal.toLocaleDateString('id-ID', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        if(!confirm(`Jadwalkan sesi dengan ${guru} pada ${tanggalStr}?`)) return;
+
+        const newJadwal = {
+            id: Date.now(),
+            jenis: 'jadwal',
+            pesan: `Konsultasi dengan ${guru}`,
+            tanggal: datetime,
+            status: 'dijadwalkan',
+            balasan: '',
+            guru: guru
+        };
+
+        konselingData.push(newJadwal);
+        saveKonselingData();
+        renderRiwayat();
+        document.getElementById('jadwalKonseling').value = '';
+        showToast(`✅ Jadwal konseling dengan ${guru} berhasil diajukan!`, 'success');
+    }
+
+    // ===== OPEN DETAIL MODAL =====
+    function openDetailModal(id) {
+        const item = konselingData.find(k => k.id === id);
+        if(!item) return;
+
+        const tanggal = new Date(item.tanggal);
+        const tanggalStr = tanggal.toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const isCurhat = item.jenis === 'curhat';
+        const icon = isCurhat ? '🤫' : '📅';
+        const label = isCurhat ? 'Curhat Anonim' : 'Sesi Konseling';
+
+        let statusText = '';
+        switch(item.status) {
+            case 'selesai': statusText = '✅ Selesai'; break;
+            case 'dijadwalkan': statusText = '⏳ Dijadwalkan'; break;
+            case 'terkirim': statusText = '📨 Terkirim'; break;
+            case 'dibalas': statusText = '💬 Dibalas'; break;
+            default: statusText = '📨 Terkirim';
+        }
+
+        let balasanHtml = '';
+        if(item.balasan) {
+            balasanHtml = `
+                <div style="background:#f0f7ff;padding:12px 16px;border-radius:8px;margin-top:12px;border-left:4px solid #6f42c1;">
+                    <strong style="color:#6f42c1;">💬 ${item.guru || 'Konselor'}:</strong>
+                    <p style="margin:6px 0 0;font-size:14px;">${item.balasan}</p>
+                </div>
+            `;
+        }
+
+        document.getElementById('detailTitle').textContent = `${icon} ${label}`;
+        document.getElementById('detailContent').innerHTML = `
+            <div style="margin-bottom:12px;">
+                <p><strong>Status:</strong> ${statusText}</p>
+                <p><strong>Tanggal:</strong> ${tanggalStr}</p>
+                ${item.guru && item.guru !== '-' ? `<p><strong>Guru BK:</strong> ${item.guru}</p>` : ''}
+            </div>
+            <div style="background:#f7f9fc;padding:12px 16px;border-radius:8px;">
+                <p style="margin:0;"><strong>Pesan:</strong></p>
+                <p style="margin:4px 0 0;">${item.pesan}</p>
+            </div>
+            ${balasanHtml}
+        `;
+
+        document.getElementById('detailModal').classList.add('active');
+    }
+
+    // ===== CLOSE DETAIL MODAL =====
+    function closeDetailModal() {
+        document.getElementById('detailModal').classList.remove('active');
+    }
+
+    // ===== SHOW TOAST =====
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s';
+            setTimeout(() => toast.remove(), 500);
+        }, 4000);
+    }
+
+    // ===== CEK LOGIN & ROLE =====
+    function checkLogin() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(!isLoggedIn || isLoggedIn !== 'true') {
+            window.location.href = 'index.html';
+            return false;
+        }
+        const user = JSON.parse(localStorage.getItem('user'));
+        if(user && user.role === 'guru') {
+            window.location.href = 'konseling_guru.html';
+            return false;
+        }
+        return true;
+    }
+
+    // ===== GET USER DATA =====
+    function getUserData() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+
+    // ===== UPDATE USER BADGE =====
+    function updateUserBadge() {
+        const user = getUserData();
+        if(user) {
+            document.querySelectorAll('.userName').forEach(el => el.textContent = user.name);
+            document.querySelectorAll('.userFoto').forEach(el => {
+                el.src = `assets/${user.foto || 'default.png'}`;
+            });
+        }
+    }
+
+    // ===== TANGGAL =====
+    function updateDate() {
+        const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
+    }
+
+    // ===== LOAD SIDEBAR =====
+    function loadSidebar() {
+        const container = document.getElementById('sidebarContainer');
+        if(!container) return;
+        fetch('partials/sidebar_siswa.html')
+            .then(response => response.text())
+            .then(html => {
+                container.innerHTML = html;
+                document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                    if(link.getAttribute('href') === 'konseling_siswa.html') {
+                        link.classList.add('active');
+                    }
+                });
+                updateUserBadge();
+            });
+    }
+
+    // ===== TOGGLE SIDEBAR =====
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        if(sidebar && overlay) {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', function() {
+        if(!checkLogin()) return;
+        loadKonselingData();
+        loadSidebar();
+        updateDate();
+        updateUserBadge();
+        renderRiwayat();
+
+        // Event listener untuk tombol
+        document.getElementById('kirimCurhat').addEventListener('click', kirimCurhat);
+        document.getElementById('ajukanJadwal').addEventListener('click', ajukanJadwal);
+
+        // Enter key untuk curhat
+        document.getElementById('curhatText').addEventListener('keydown', function(e) {
+            if(e.key === 'Enter' && e.ctrlKey) {
+                kirimCurhat();
+            }
+        });
+
+        // Tutup modal dengan ESC
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'Escape') {
+                closeDetailModal();
+            }
+        });
+
+        // Tutup modal klik di luar
+        document.getElementById('detailModal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                closeDetailModal();
+            }
+        });
+
+        const overlay = document.getElementById('sidebarOverlay');
+        if(overlay) {
+            overlay.addEventListener('click', function() {
+                const sidebar = document.getElementById('sidebar');
+                if(sidebar) sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        }
+    });
+    </script>
+    <script src="js/logout.js"></script>
+</body>
+</html>
