@@ -5,40 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - NexSchool</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-info {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        .login-info strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .demo-data {
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .demo-data table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .demo-data th {
+            text-align: left;
+            padding: 4px 8px;
+            background: #e8edf3;
+            font-weight: 600;
+        }
+        .demo-data td {
+            padding: 3px 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .demo-data .label-guru {
+            color: #f5a623;
+            font-weight: 600;
+        }
+        .demo-data .label-siswa {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .demo-data::-webkit-scrollbar {
+            width: 4px;
+        }
+        .demo-data::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        .search-box {
+            margin-bottom: 8px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body class="login-page">
     <div class="login-container">
         <div class="login-box">
             <div class="login-logo">
-                <img src="assets/default.png" alt="NexSchool" style="width:60px;height:60px;border-radius:50%;background:#2d6a9f;padding:10px;">
+                <img src="assets/default.png" alt="NexSchool" style="width:60px;height:60px;border-radius:50%;background:#2d6a9f;padding:10px;" onerror="this.style.display='none'">
                 <h1>Nex<span>School</span></h1>
                 <p>Belajar & Berkembang Bersama</p>
             </div>
             
+            <div class="login-info">
+                <strong>🔓 Login Tanpa Password!</strong>
+                <span>Cukup masukkan NIS dan Nama Anda. Siapapun bisa masuk!</span>
+            </div>
+            
             <form id="loginForm">
                 <div class="input-group">
-                    <label>📝 NIS</label>
-                    <input type="text" id="nis" placeholder="Masukkan NIS (contoh: 2026001)" required>
+                    <label>📝 NIS / NIP</label>
+                    <input type="text" id="nis" placeholder="Masukkan NIS (contoh: 24.7464)" required>
                 </div>
                 <div class="input-group">
-                    <label>📧 Email</label>
-                    <input type="email" id="email" placeholder="Masukkan Email (contoh: siswa@nexschool.id)" required>
-                </div>
-                <div class="input-group">
-                    <label>🔒 Password</label>
-                    <input type="password" id="password" placeholder="Masukkan Password" required>
+                    <label>👤 Nama Lengkap</label>
+                    <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required>
                 </div>
                 
-                <div id="loginError" class="error-msg" style="display:none;">❌ NIS, Email, atau Password salah!</div>
+                <div id="loginError" class="error-msg" style="display:none;">❌ NIS atau Nama tidak ditemukan!</div>
                 
-                <button type="submit" class="btn-primary btn-block">Masuk</button>
+                <button type="submit" class="btn-primary btn-block">🚪 Masuk</button>
                 
                 <div class="login-options">
-                    <a href="#" id="lupaPassword">Lupa Password?</a>
-                    <span>|</span>
-                    <a href="#" id="guestLogin">Masuk sebagai Tamu</a>
+                    <a href="#" id="guestLogin" style="cursor:pointer;">👤 Masuk sebagai Tamu</a>
                 </div>
             </form>
+            
+            <!-- DEMO DATA SISWA -->
+            <div class="demo-data">
+                <strong>📋 Data Siswa (35 Siswa):</strong>
+                <div class="search-box">
+                    <input type="text" id="searchSiswa" placeholder="🔍 Cari nama atau NIS..." onkeyup="filterSiswa()">
+                </div>
+                <table id="siswaTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIS</th>
+                            <th>Nama</th>
+                            <th>JK</th>
+                            <th>Kelas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siswaBody">
+                        <!-- Akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+                <br>
+                <strong style="color:#f5a623;">👨‍🏫 Guru:</strong> 
+                <span style="font-size:12px;">NIP: 2026001 - Budi Santoso | NIP: 2026002 - Ani Wijaya</span>
+            </div>
             
             <div class="login-footer">
                 <small>&copy; 2026 NexSchool - Platform Belajar Digital</small>
@@ -47,65 +136,186 @@
     </div>
 
     <script>
+    // ===== DATA GURU =====
+    const GURU = {
+        '2026001': { nama: 'Guru', role: 'guru', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '2026002': { nama: 'Guru', role: 'guru', kelas: 'XII-E  IPS II', foto: 'default.png' }
+    };
+
+    // ===== DATA SISWA (DARI GAMBAR) =====
+    const SISWA = {
+        '24.7464': { nama: 'Ahmad Dito Galah Permana', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7465': { nama: 'Ahmad Faiz Farrel Ardan Athariq', role: 'siswa', kelas: 'XII-E  IPS II5', foto: 'default.png' },
+        '24.7474': { nama: 'Alfira Dwi Oktavianti', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7487': { nama: 'Anggun Marel Mauludiah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7491': { nama: 'Annisa Savina Agustin', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7502': { nama: 'Ayesha Desiani Putri', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7504': { nama: 'Azhalia Nisa Ramadhani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7506': { nama: 'Azzahwa Quenta Paradiza', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7519': { nama: 'Deviana Ajeng Rahmadani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7531': { nama: 'Eka Fiery Saputra', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '25.7723': { nama: 'Febriansah Maulana Putra', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7545': { nama: 'Gaby Amelya Agatha', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7549': { nama: 'Hanudi', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7557': { nama: 'Ineke Alya Kamalin', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7566': { nama: 'Khaninda Alea Lailatus Istianah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7572': { nama: 'Lintang Aulia Salam', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7574': { nama: 'Lutfia Luisanda Zahran', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7575': { nama: 'M Irham Habibi', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7581': { nama: 'Maretha Maulida Pratama', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7583': { nama: 'Maura Fira Fimada', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7594': { nama: 'Muh Fachri Hilal Antony', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '25.7724': { nama: 'Muhammad Awwaluddin Irsyad', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7595': { nama: 'Muhammad Azzam Putra Pratama', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7600': { nama: 'Muhammad Rayyan Rasyid', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7603': { nama: 'Muhammad Yusuf Ferdiansyah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7623': { nama: 'Nita Elfratus Sa\'Diyah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7626': { nama: 'Nur Sabila', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7637': { nama: 'Rahma Nur Sasi', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7638': { nama: 'Rani Juliana Hasiholan', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7649': { nama: 'Risma Mclasih', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7652': { nama: 'Rizqi Dwi Ramadhani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7659': { nama: 'Shinta Febrianti', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7662': { nama: 'Silvia Aulia Nadzani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7667': { nama: 'Suko Ilham Mahameru', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7673': { nama: 'Vanova Az Zahro', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' }
+    };
+
+    // ===== GABUNGKAN SEMUA USER =====
+    const USERS = { ...GURU, ...SISWA };
+
+    // ===== RENDER TABEL SISWA =====
+    function renderSiswa(filter = '') {
+        const tbody = document.getElementById('siswaBody');
+        if(!tbody) return;
+        
+        let html = '';
+        let no = 1;
+        const search = filter.toLowerCase();
+        
+        // Guru
+        html += `<tr style="background:#fff8e1;">
+            <td colspan="5" style="padding:4px 8px;font-weight:600;color:#f5a623;">👨‍🏫 GURU</td>
+        </tr>`;
+        Object.keys(GURU).forEach(nis => {
+            const user = GURU[nis];
+            if(search && !user.nama.toLowerCase().includes(search) && !nis.includes(search)) return;
+            html += `
+                <tr style="background:#fff8e1;">
+                    <td>${no++}</td>
+                    <td><strong>${nis}</strong></td>
+                    <td>${user.nama}</td>
+                    <td>-</td>
+                    <td><span style="background:#f5a623;color:#fff;padding:1px 8px;border-radius:10px;font-size:10px;">GURU</span></td>
+                </tr>
+            `;
+        });
+        
+        // Siswa
+        html += `<tr style="background:#e8f5e9;">
+            <td colspan="5" style="padding:4px 8px;font-weight:600;color:#28a745;">👨‍🎓 SISWA</td>
+        </tr>`;
+        Object.keys(SISWA).forEach(nis => {
+            const user = SISWA[nis];
+            if(search && !user.nama.toLowerCase().includes(search) && !nis.includes(search)) return;
+            const jk = user.nama.includes(' ')? 
+                ['L','P'].includes(user.nama.split(' ').pop().charAt(0)) ? 
+                (user.nama.split(' ').pop().charAt(0) === 'L' ? 'L' : 'P') : '-' : '-';
+            html += `
+                <tr>
+                    <td>${no++}</td>
+                    <td><strong>${nis}</strong></td>
+                    <td>${user.nama}</td>
+                    <td>${jk}</td>
+                    <td>${user.kelas}</td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+    }
+
+    // ===== FILTER SISWA =====
+    function filterSiswa() {
+        const search = document.getElementById('searchSiswa').value;
+        renderSiswa(search);
+    }
+
+    // ===== CEK SUDAH LOGIN =====
+    (function() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(isLoggedIn === 'true') {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user && user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else if(user && user.role === 'siswa') {
+                window.location.href = 'dashboard_siswa.html';
+            } else {
+                window.location.href = 'dashboard_siswa.html';
+            }
+        }
+    })();
+
     // ===== LOGIN HANDLER =====
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const nis = document.getElementById('nis').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+        const nama = document.getElementById('nama').value.trim();
         const errorDiv = document.getElementById('loginError');
         
-        // Validasi
-        if(!nis || !email || !password) {
-            errorDiv.textContent = '⚠️ Semua field harus diisi!';
+        if(!nis || !nama) {
+            errorDiv.textContent = '⚠️ NIS dan Nama harus diisi!';
             errorDiv.style.display = 'block';
             return;
         }
         
-        // Validasi login (hardcoded)
-        if(nis === '2026001' && email === 'siswa@nexschool.id' && password === '123456') {
-            // Simpan ke localStorage
+        // Cek user di database
+        const user = USERS[nis];
+        
+        if(user && user.nama.toLowerCase() === nama.toLowerCase()) {
             const userData = {
-                name: 'Siswa NexSchool',
                 nis: nis,
-                email: email,
-                kelas: 'XII IPA 1',
-                foto: 'default.png'
+                name: user.nama,
+                role: user.role,
+                kelas: user.kelas,
+                foto: user.foto
             };
             localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('isLoggedIn', 'true');
             
-            // Redirect ke dashboard
-            window.location.href = 'dashboard.html';
+            if(user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else {
+                window.location.href = 'dashboard_siswa.html';
+            }
         } else {
-            errorDiv.textContent = '❌ NIS, Email, atau Password salah!';
+            errorDiv.textContent = '❌ NIS atau Nama tidak ditemukan!';
             errorDiv.style.display = 'block';
         }
-    });
-    
-    // ===== LUPA PASSWORD =====
-    document.getElementById('lupaPassword').addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('📧 Silakan hubungi admin sekolah untuk reset password.\n\nAtau kirim email ke: admin@nexschool.id');
     });
     
     // ===== MASUK SEBAGAI TAMU =====
     document.getElementById('guestLogin').addEventListener('click', function(e) {
         e.preventDefault();
-        if(confirm('Masuk sebagai tamu? Anda akan memiliki akses terbatas.')) {
+        if(confirm('Masuk sebagai tamu? Akses terbatas.')) {
             const guestData = {
-                name: 'Tamu NexSchool',
                 nis: 'GUEST001',
-                email: 'tamu@nexschool.id',
+                name: 'Tamu NexSchool',
+                role: 'tamu',
                 kelas: '-',
                 foto: 'default.png',
                 isGuest: true
             };
             localStorage.setItem('user', JSON.stringify(guestData));
             localStorage.setItem('isLoggedIn', 'true');
-            window.location.href = 'dashboard.html';
+            window.location.href = 'dashboard_siswa.html';
         }
+    });
+
+    // ===== RENDER SAAT LOAD =====
+    document.addEventListener('DOMContentLoaded', function() {
+        renderSiswa();
     });
     </script>
 </body>
