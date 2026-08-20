@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - NexSchool</title>
+    <title>Login - SMA Diponegoro Tumpang</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         .login-info {
@@ -69,15 +69,41 @@
             border-radius: 4px;
             font-size: 12px;
         }
+        .login-logo .sekolah {
+            font-size: 14px;
+            color: #888;
+            font-weight: 400;
+            margin-top: -4px;
+            letter-spacing: 1px;
+        }
+        .login-logo .sekolah span {
+            color: #2d6a9f;
+            font-weight: 600;
+        }
+        .footer-credit {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e8edf3;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .footer-credit strong {
+            color: #2d6a9f;
+        }
+        .footer-credit .heart {
+            color: #e74c3c;
+        }
     </style>
 </head>
 <body class="login-page">
     <div class="login-container">
         <div class="login-box">
             <div class="login-logo">
-                <img src="assets/default.png" alt="NexSchool" style="width:60px;height:60px;border-radius:50%;background:#2d6a9f;padding:10px;" onerror="this.style.display='none'">
+                <img src="assets/default.png" alt="SMA Diponegoro Tumpang" style="width:70px;height:70px;border-radius:50%;background:#2d6a9f;padding:10px;" onerror="this.style.display='none'">
                 <h1>Nex<span>School</span></h1>
-                <p>Belajar & Berkembang Bersama</p>
+                <p class="sekolah">🏫 <span>SMA Diponegoro Tumpang</span></p>
+                <p style="font-size:13px;color:#888;margin-top:2px;">Platform Belajar Digital</p>
             </div>
             
             <div class="login-info">
@@ -126,11 +152,16 @@
                 </table>
                 <br>
                 <strong style="color:#f5a623;">👨‍🏫 Guru:</strong> 
-                <span style="font-size:12px;">NIP: 2026001 - Budi Santoso | NIP: 2026002 - Ani Wijaya</span>
+                <span style="font-size:12px;">NIP: 2026001 - afrida yulianti S.PSI.,GR | NIP: 2026002 - guru2</span>
             </div>
             
-            <div class="login-footer">
-                <small>&copy; 2026 NexSchool - Platform Belajar Digital</small>
+            <!-- FOOTER DENGAN NAMA PEMBUAT -->
+            <div class="footer-credit">
+                <span class="heart"></span> Dibuat oleh 
+                <strong>Risma Melasih</strong> &amp; <strong>Gaby Amelya Agatha</strong>
+                <span class="heart"></span>
+                <br>
+                <small>© 2026 SMA Diponegoro Tumpang - NexSchool</small>
             </div>
         </div>
     </div>
@@ -138,14 +169,14 @@
     <script>
     // ===== DATA GURU =====
     const GURU = {
-        '2026001': { nama: 'Guru', role: 'guru', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '2026002': { nama: 'Guru', role: 'guru', kelas: 'XII-E  IPS II', foto: 'default.png' }
+        '2026001': { nama: 'afrida yulianti S.PSI.,GR', role: 'guru', kelas: '-', foto: 'default.png' },
+        '2026002': { nama: 'guru2', role: 'guru', kelas: '-', foto: 'default.png' }
     };
 
     // ===== DATA SISWA (DARI GAMBAR) =====
     const SISWA = {
         '24.7464': { nama: 'Ahmad Dito Galah Permana', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '24.7465': { nama: 'Ahmad Faiz Farrel Ardan Athariq', role: 'siswa', kelas: 'XII-E  IPS II5', foto: 'default.png' },
+        '24.7465': { nama: 'Ahmad Faiz Farrel Ardan Athariq', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7474': { nama: 'Alfira Dwi Oktavianti', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7487': { nama: 'Anggun Marel Mauludiah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7491': { nama: 'Annisa Savina Agustin', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
@@ -156,12 +187,12 @@
         '24.7531': { nama: 'Eka Fiery Saputra', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '25.7723': { nama: 'Febriansah Maulana Putra', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7545': { nama: 'Gaby Amelya Agatha', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '24.7549': { nama: 'Hanudi', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7549': { nama: 'Hanudi', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7557': { nama: 'Ineke Alya Kamalin', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7566': { nama: 'Khaninda Alea Lailatus Istianah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7572': { nama: 'Lintang Aulia Salam', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7574': { nama: 'Lutfia Luisanda Zahran', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '24.7575': { nama: 'M Irham Habibi', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7575': { nama: 'M Irham Habibi', role: 'siswa', kelas: 'OS', foto: 'default.png' },
         '24.7581': { nama: 'Maretha Maulida Pratama', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7583': { nama: 'Maura Fira Fimada', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7594': { nama: 'Muh Fachri Hilal Antony', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
@@ -169,11 +200,11 @@
         '24.7595': { nama: 'Muhammad Azzam Putra Pratama', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7600': { nama: 'Muhammad Rayyan Rasyid', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7603': { nama: 'Muhammad Yusuf Ferdiansyah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '24.7623': { nama: 'Nita Elfratus Sa\'Diyah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7623': { nama: 'Nita Elfratus SaDiyah', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7626': { nama: 'Nur Sabila', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7637': { nama: 'Rahma Nur Sasi', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7638': { nama: 'Rani Juliana Hasiholan', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
-        '24.7649': { nama: 'Risma Mclasih', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
+        '24.7649': { nama: 'Risma Melasih', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7652': { nama: 'Rizqi Dwi Ramadhani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7659': { nama: 'Shinta Febrianti', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },
         '24.7662': { nama: 'Silvia Aulia Nadzani', role: 'siswa', kelas: 'XII-E  IPS II', foto: 'default.png' },

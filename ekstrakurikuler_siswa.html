@@ -3,201 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ekstrakurikuler - Siswa</title>
+    <title>Login - SMA Diponegoro Tumpang</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-info {
+            background: #e8f5e9;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+        .login-info strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .demo-data {
+            background: #f5f5f5;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .demo-data table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .demo-data th {
+            text-align: left;
+            padding: 4px 8px;
+            background: #e8edf3;
+            font-weight: 600;
+        }
+        .demo-data td {
+            padding: 3px 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .demo-data .label-guru {
+            color: #f5a623;
+            font-weight: 600;
+        }
+        .demo-data .label-siswa {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .demo-data::-webkit-scrollbar {
+            width: 4px;
+        }
+        .demo-data::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+        .search-box {
+            margin-bottom: 8px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .login-logo .sekolah {
+            font-size: 14px;
+            color: #888;
+            font-weight: 400;
+            margin-top: -4px;
+            letter-spacing: 1px;
+        }
+        .login-logo .sekolah span {
+            color: #2d6a9f;
+            font-weight: 600;
+        }
+        .footer-credit {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e8edf3;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .footer-credit strong {
+            color: #2d6a9f;
+        }
+        .footer-credit .heart {
+            color: #e74c3c;
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <div id="sidebarContainer"></div>
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        
-        <div class="main-content">
-            <div class="topbar">
-                <div style="display:flex;align-items:center;gap:12px;">
-                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
-                    <h3>🏫 Ekstrakurikuler</h3>
-                </div>
-                <div class="topbar-right">
-                    <span style="color:#888;" id="tanggalDisplay"></span>
-                    <div class="user-badge">
-                        <img src="assets/default.png" alt="Foto" class="userFoto" onerror="this.style.display='none'">
-                        <span class="userName">User</span>
-                        <span style="background:#28a745;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;">Siswa</span>
-                    </div>
-                </div>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-logo">
+                <img src="assets/default.png" alt="SMA Diponegoro Tumpang" style="width:70px;height:70px;border-radius:50%;background:#2d6a9f;padding:10px;" onerror="this.style.display='none'">
+                <h1>Nex<span>School</span></h1>
+                <p class="sekolah">🏫 <span>SMA Diponegoro Tumpang</span></p>
+                <p style="font-size:13px;color:#888;margin-top:2px;">Platform Belajar Digital</p>
             </div>
             
-            <!-- JADWAL HARI INI -->
-            <div class="page-card" style="border-left:4px solid #2d6a9f;">
-                <h4>📅 Jadwal Latihan Hari Ini</h4>
-                <ul style="list-style:none;padding:0;margin-top:8px;">
-                    <li style="padding:10px 0;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;align-items:center;">
-                        <div>
-                            <strong>🏀 Basket</strong>
-                            <br><small style="color:#888;">15:00 - 17:00 (GOR)</small>
-                        </div>
-                        <button class="btn-primary" onclick="absen('Basket')" style="font-size:12px;padding:6px 16px;">✅ Absen</button>
-                    </li>
-                    <li style="padding:10px 0;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;align-items:center;">
-                        <div>
-                            <strong>🎵 Paduan Suara</strong>
-                            <br><small style="color:#888;">16:30 - 18:00 (Aula)</small>
-                        </div>
-                        <button class="btn-secondary" style="font-size:12px;padding:6px 16px;" disabled>⏳ Belum Mulai</button>
-                    </li>
-                </ul>
+            <div class="login-info">
+                <strong>🔓 Login Tanpa Password!</strong>
+                <span>Cukup masukkan NIS dan Nama Anda. Siapapun bisa masuk!</span>
             </div>
             
-            <!-- DAFTAR KLUB (Siswa hanya bisa lihat & daftar) -->
-            <div class="page-card">
-                <h4>📋 Daftar Klub / UKM</h4>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:12px;">
-                    <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
-                        <div style="font-size:40px;">🏀</div>
-                        <h5>Basket</h5>
-                        <p style="font-size:13px;color:#888;">Senin & Rabu</p>
-                        <button class="btn-secondary" style="font-size:12px;width:100%;padding:8px;" disabled>✅ Sudah Gabung</button>
-                    </div>
-                    <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
-                        <div style="font-size:40px;">🎵</div>
-                        <h5>Paduan Suara</h5>
-                        <p style="font-size:13px;color:#888;">Selasa & Kamis</p>
-                        <button class="btn-primary" onclick="daftarKlub('Paduan Suara')" style="font-size:12px;width:100%;padding:8px;">Daftar</button>
-                    </div>
-                    <div class="ekstra-item" style="background:#f7f9fc;padding:20px;border-radius:12px;text-align:center;">
-                        <div style="font-size:40px;">💻</div>
-                        <h5>Coding Club</h5>
-                        <p style="font-size:13px;color:#888;">Jumat</p>
-                        <button class="btn-primary" onclick="daftarKlub('Coding Club')" style="font-size:12px;width:100%;padding:8px;">Daftar</button>
-                    </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>📝 NIS / NIP</label>
+                    <input type="text" id="nis" placeholder="Masukkan NIS (contoh: 24.7464)" required>
                 </div>
+                <div class="input-group">
+                    <label>👤 Nama Lengkap</label>
+                    <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required>
+                </div>
+                
+                <div id="loginError" class="error-msg" style="display:none;">❌ NIS atau Nama tidak ditemukan!</div>
+                
+                <button type="submit" class="btn-primary btn-block">🚪 Masuk</button>
+                
+                <div class="login-options">
+                    <a href="#" id="guestLogin" style="cursor:pointer;">👤 Masuk sebagai Tamu</a>
+                </div>
+            </form>
+            
+            <!-- DEMO DATA SISWA -->
+            <div class="demo-data">
+                <strong>📋 Data Siswa (35 Siswa):</strong>
+                <div class="search-box">
+                    <input type="text" id="searchSiswa" placeholder="🔍 Cari nama atau NIS..." onkeyup="filterSiswa()">
+                </div>
+                <table id="siswaTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>NIS</th>
+                            <th>Nama</th>
+                            <th>JK</th>
+                            <th>Kelas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="siswaBody">
+                        <!-- Akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+                <br>
+                <strong style="color:#f5a623;">👨‍🏫 Guru:</strong> 
+                <span style="font-size:12px;">NIP: 2026001 - Budi Santoso | NIP: 2026002 - Ani Wijaya</span>
             </div>
             
-            <!-- RIWAYAT -->
-            <div class="page-card">
-                <h4>📜 Riwayat Keikutsertaan</h4>
-                <ul style="list-style:none;padding:0;margin-top:8px;">
-                    <li style="padding:10px 0;border-bottom:1px solid #f0f4f8;display:flex;justify-content:space-between;">
-                        <div><strong>🏀 Basket</strong><br><small style="color:#888;">12 Jan 2026</small></div>
-                        <span style="color:#28a745;">✅ Hadir</span>
-                    </li>
-                    <li style="padding:10px 0;display:flex;justify-content:space-between;">
-                        <div><strong>💻 Coding Club</strong><br><small style="color:#888;">8 Jan 2026</small></div>
-                        <span style="color:#dc3545;">❌ Tidak Hadir</span>
-                    </li>
-                </ul>
+            <!-- FOOTER DENGAN NAMA PEMBUAT -->
+            <div class="footer-credit">
+                <span class="heart">❤️</span> Dibuat oleh 
+                <strong>Risma Mclasih</strong> &amp; <strong>Gaby Amelya Agatha</strong>
+                <span class="heart">❤️</span>
+                <br>
+                <small>© 2026 SMA Diponegoro Tumpang - NexSchool</small>
             </div>
         </div>
     </div>
 
     <script>
-    // ===== FUNGSI SISWA =====
-    function absen(nama) {
-        if(confirm(`Konfirmasi kehadiran untuk "${nama}"?`)) {
-            alert('✅ Presensi berhasil dicatat!');
-        }
-    }
-    
-    function daftarKlub(nama) {
-        if(confirm(`Yakin ingin mendaftar di ${nama}?`)) {
-            alert(`✅ Berhasil mendaftar di ${nama}!`);
-            const btns = document.querySelectorAll('.ekstra-item .btn-primary');
-            btns.forEach(btn => {
-                if(btn.textContent === 'Daftar') {
-                    const parent = btn.closest('.ekstra-item');
-                    const title = parent.querySelector('h5').textContent;
-                    if(title === nama) {
-                        btn.textContent = '✅ Sudah Gabung';
-                        btn.className = 'btn-secondary';
-                        btn.disabled = true;
-                    }
-                }
-            });
-        }
-    }
-    
-    // ===== CEK LOGIN =====
-    function checkLogin() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
-        if(!isLoggedIn || isLoggedIn !== 'true') {
-            window.location.href = 'index.html';
-            return false;
-        }
-        const user = JSON.parse(localStorage.getItem('user'));
-        if(user && user.role === 'guru') {
-            window.location.href = 'ekstrakurikuler_guru.html';
-            return false;
-        }
-        return true;
-    }
-    
-    // ===== GET USER DATA =====
-    function getUserData() {
-        const user = localStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    }
-    
-    // ===== UPDATE USER BADGE =====
-    function updateUserBadge() {
-        const user = getUserData();
-        if(user) {
-            document.querySelectorAll('.userName').forEach(el => el.textContent = user.name);
-            document.querySelectorAll('.userFoto').forEach(el => {
-                el.src = `assets/${user.foto || 'default.png'}`;
-            });
-        }
-    }
-    
-    // ===== TANGGAL =====
-    function updateDate() {
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        document.getElementById('tanggalDisplay').textContent = new Date().toLocaleDateString('id-ID', options);
-    }
-    
-    // ===== LOAD SIDEBAR =====
-    function loadSidebar() {
-        const container = document.getElementById('sidebarContainer');
-        if(!container) return;
-        fetch('partials/sidebar_siswa.html')
-            .then(response => response.text())
-            .then(html => {
-                container.innerHTML = html;
-                document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                    if(link.getAttribute('href') === 'ekstrakurikuler_siswa.html') {
-                        link.classList.add('active');
-                    }
-                });
-                updateUserBadge();
-            });
-    }
-    
-    // ===== TOGGLE SIDEBAR =====
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        if(sidebar && overlay) {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        }
-    }
-    
-    // ===== INIT =====
-    document.addEventListener('DOMContentLoaded', function() {
-        if(!checkLogin()) return;
-        loadSidebar();
-        updateDate();
-        updateUserBadge();
+    // ===== DATA GURU =====
+    const GURU = {
+        '2026001': { nama: 'Budi Santoso', role: 'guru', kelas: '-', foto: 'default.png' },
+        '2026002': { nama: 'Ani Wijaya', role: 'guru', kelas: '-', foto: 'default.png' }
+    };
+
+    // ===== DATA SISWA (DARI GAMBAR) =====
+    const SISWA = {
+        '24.7464': { nama: 'Ahmad Dito Galah Permana', role: 'siswa', kelas: '05', foto: 'default.png' },
+        '24.7465': { nama: 'Ahmad Faiz Farrel Ardan Athariq', role: 'siswa', kelas: '05', foto: 'default.png' },
+        '24.7474': { nama: 'Alfira Dwi Oktavianti', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7487': { nama: 'Anggun Marel Mauludiah', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7491': { nama: 'Annisa Savina Agustin', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7502': { nama: 'Ayesha Desiani Putri', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7504': { nama: 'Azhalia Nisa Ramadhani', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7506': { nama: 'Azzahwa Quenta Paradiza', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7519': { nama: 'Deviana Ajeng Rahmadani', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7531': { nama: 'Eka Fiery Saputra', role: 'siswa', kelas: 'EK', foto: 'default.png' },
+        '25.7723': { nama: 'Febriansah Maulana Putra', role: 'siswa', kelas: 'EK', foto: 'default.png' },
+        '24.7545': { nama: 'Gaby Amelya Agatha', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7549': { nama: 'Hanudi', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7557': { nama: 'Ineke Alya Kamalin', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7566': { nama: 'Khaninda Alea Lailatus Istianah', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7572': { nama: 'Lintang Aulia Salam', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7574': { nama: 'Lutfia Luisanda Zahran', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7575': { nama: 'M Irham Habibi', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7581': { nama: 'Maretha Maulida Pratama', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7583': { nama: 'Maura Fira Fimada', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7594': { nama: 'Muh Fachri Hilal Antony', role: 'siswa', kelas: 'EK', foto: 'default.png' },
+        '25.7724': { nama: 'Muhammad Awwaluddin Irsyad', role: 'siswa', kelas: 'EK', foto: 'default.png' },
+        '24.7595': { nama: 'Muhammad Azzam Putra Pratama', role: 'siswa', kelas: 'A', foto: 'default.png' },
+        '24.7600': { nama: 'Muhammad Rayyan Rasyid', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7603': { nama: 'Muhammad Yusuf Ferdiansyah', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7623': { nama: 'Nita Elfratus Sa\'Diyah', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7626': { nama: 'Nur Sabila', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7637': { nama: 'Rahma Nur Sasi', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7638': { nama: 'Rani Juliana Hasiholan', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7649': { nama: 'Risma Mclasih', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7652': { nama: 'Rizqi Dwi Ramadhani', role: 'siswa', kelas: 'AP', foto: 'default.png' },
+        '24.7659': { nama: 'Shinta Febrianti', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7662': { nama: 'Silvia Aulia Nadzani', role: 'siswa', kelas: 'TB', foto: 'default.png' },
+        '24.7667': { nama: 'Suko Ilham Mahameru', role: 'siswa', kelas: 'OS', foto: 'default.png' },
+        '24.7673': { nama: 'Vanova Az Zahro', role: 'siswa', kelas: 'AP', foto: 'default.png' }
+    };
+
+    // ===== GABUNGKAN SEMUA USER =====
+    const USERS = { ...GURU, ...SISWA };
+
+    // ===== RENDER TABEL SISWA =====
+    function renderSiswa(filter = '') {
+        const tbody = document.getElementById('siswaBody');
+        if(!tbody) return;
         
-        const overlay = document.getElementById('sidebarOverlay');
-        if(overlay) {
-            overlay.addEventListener('click', function() {
-                const sidebar = document.getElementById('sidebar');
-                if(sidebar) sidebar.classList.remove('open');
-                overlay.classList.remove('active');
-            });
+        let html = '';
+        let no = 1;
+        const search = filter.toLowerCase();
+        
+        // Guru
+        html += `<tr style="background:#fff8e1;">
+            <td colspan="5" style="padding:4px 8px;font-weight:600;color:#f5a623;">👨‍🏫 GURU</td>
+        </tr>`;
+        Object.keys(GURU).forEach(nis => {
+            const user = GURU[nis];
+            if(search && !user.nama.toLowerCase().includes(search) && !nis.includes(search)) return;
+            html += `
+                <tr style="background:#fff8e1;">
+                    <td>${no++}</td>
+                    <td><strong>${nis}</strong></td>
+                    <td>${user.nama}</td>
+                    <td>-</td>
+                    <td><span style="background:#f5a623;color:#fff;padding:1px 8px;border-radius:10px;font-size:10px;">GURU</span></td>
+                </tr>
+            `;
+        });
+        
+        // Siswa
+        html += `<tr style="background:#e8f5e9;">
+            <td colspan="5" style="padding:4px 8px;font-weight:600;color:#28a745;">👨‍🎓 SISWA</td>
+        </tr>`;
+        Object.keys(SISWA).forEach(nis => {
+            const user = SISWA[nis];
+            if(search && !user.nama.toLowerCase().includes(search) && !nis.includes(search)) return;
+            const jk = user.nama.includes(' ')? 
+                ['L','P'].includes(user.nama.split(' ').pop().charAt(0)) ? 
+                (user.nama.split(' ').pop().charAt(0) === 'L' ? 'L' : 'P') : '-' : '-';
+            html += `
+                <tr>
+                    <td>${no++}</td>
+                    <td><strong>${nis}</strong></td>
+                    <td>${user.nama}</td>
+                    <td>${jk}</td>
+                    <td>${user.kelas}</td>
+                </tr>
+            `;
+        });
+        
+        tbody.innerHTML = html;
+    }
+
+    // ===== FILTER SISWA =====
+    function filterSiswa() {
+        const search = document.getElementById('searchSiswa').value;
+        renderSiswa(search);
+    }
+
+    // ===== CEK SUDAH LOGIN =====
+    (function() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        if(isLoggedIn === 'true') {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(user && user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else if(user && user.role === 'siswa') {
+                window.location.href = 'dashboard_siswa.html';
+            } else {
+                window.location.href = 'dashboard_siswa.html';
+            }
+        }
+    })();
+
+    // ===== LOGIN HANDLER =====
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const nis = document.getElementById('nis').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const errorDiv = document.getElementById('loginError');
+        
+        if(!nis || !nama) {
+            errorDiv.textContent = '⚠️ NIS dan Nama harus diisi!';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Cek user di database
+        const user = USERS[nis];
+        
+        if(user && user.nama.toLowerCase() === nama.toLowerCase()) {
+            const userData = {
+                nis: nis,
+                name: user.nama,
+                role: user.role,
+                kelas: user.kelas,
+                foto: user.foto
+            };
+            localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            if(user.role === 'guru') {
+                window.location.href = 'dashboard_guru.html';
+            } else {
+                window.location.href = 'dashboard_siswa.html';
+            }
+        } else {
+            errorDiv.textContent = '❌ NIS atau Nama tidak ditemukan!';
+            errorDiv.style.display = 'block';
         }
     });
+    
+    // ===== MASUK SEBAGAI TAMU =====
+    document.getElementById('guestLogin').addEventListener('click', function(e) {
+        e.preventDefault();
+        if(confirm('Masuk sebagai tamu? Akses terbatas.')) {
+            const guestData = {
+                nis: 'GUEST001',
+                name: 'Tamu NexSchool',
+                role: 'tamu',
+                kelas: '-',
+                foto: 'default.png',
+                isGuest: true
+            };
+            localStorage.setItem('user', JSON.stringify(guestData));
+            localStorage.setItem('isLoggedIn', 'true');
+            window.location.href = 'dashboard_siswa.html';
+        }
+    });
+
+    // ===== RENDER SAAT LOAD =====
+    document.addEventListener('DOMContentLoaded', function() {
+        renderSiswa();
+    });
     </script>
-    <script src="js/logout.js"></script>
 </body>
 </html>
